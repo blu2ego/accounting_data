@@ -14,4 +14,4 @@ audit_table_man <- list(2019, 17, 1, 26, 18, 74, NA, internal_audit)
 names(audit_table_man) <- c("회계연도", "품질관리검토자", "담당이사", "등록 공인회계사", 
                             "수습 공인회계사", "전산감사 등 전문가", "수주산업 전문가", "내부회계관리제도 감사 또는 검토의견") 
 
-audit_table_man$`내부회계관리제도 감사 또는 검토의견`
+audit_table_man
