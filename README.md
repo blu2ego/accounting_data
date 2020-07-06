@@ -1,4 +1,4 @@
-# WAD(Wrangling Accounting Data)
+# WARD(Wrangling Accounting Related Data)
 
 Crawling and Processing of Accounting Related Raw Data
 
