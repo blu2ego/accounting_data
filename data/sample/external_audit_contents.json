@@ -2,14 +2,16 @@
   "보고서": {
     "fiscal_year": "2019",
     "year_end": "1231",
+    "corp_cls": "Y",
+    "corp_name": "삼성전자",
     "corp_code": "00126380",
     "stock_code": "005930",
-    "corp_name": "삼성전자",
     "report_name": "감사보고서",
-    "turn": "51",
     "rcept_no": "20030807000168",
-    "auditor": "삼일회계법인",
-    "rcept_dt": "20030807"
+    "flr_name": "삼일회계법인",
+    "rcept_dt": "20030807",
+    "rm": "Y",
+    "turn": "51"
   },
   "감사참여자 구분별 인원수 및 감사시간": {
     "투입 인원수": [
