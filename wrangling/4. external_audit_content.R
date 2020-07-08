@@ -1,8 +1,10 @@
 # 감사보고서(audit report) 중 외부감사 실시 내용
 
 # 보고서 메타 데이터(감사보고서)
-meta_report_audit <- list("fiscal_year" = "2019", "year_end" = "1231", "corp_code" = "00126380", "stock_code" = "005930", "corp_name" = "삼성전자", 
-                          "report_name" = "감사보고서",  "turn" = "51", "rcept_no" = "20030807000168", "auditor" = "삼일회계법인", "rcept_dt" = "20030807")
+meta_report_audit <- list("fiscal_year" = "2019", "year_end" = "1231", "corp_cls" = "Y", "corp_name" = "삼성전자",
+                          "corp_code" = "00126380", "stock_code" = "005930", "report_name" = "감사보고서",  
+                          "rcept_no" = "20030807000168", "flr_name" = "삼일회계법인", "rcept_dt" = "20030807", "rm" = "Y",
+                          "turn" = "51")
 
 # 외부감사 실시 내용 중 투입 인원수 정보 
 quality_ctrl <- list("품질관리검토자" = 17)
