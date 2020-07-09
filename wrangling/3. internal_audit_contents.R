@@ -1,4 +1,4 @@
-# 감사보고서(audit report) 중 내부회계관리제도 감사 또는 감사 또는 검토 의견
+# 감사보고서(audit report) 중 내부회계관리제도 감사 또는 검토 의견
 
 # 보고서 메타 데이터(감사보고서)
 meta_report_audit <- list("fiscal_year" = "2019", "year_end" = "1231", "corp_cls" = "Y", "corp_name" = "삼성전자",
