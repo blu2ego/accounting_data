@@ -1,7 +1,7 @@
-source("00_environment.R", encoding = "UTF-8")
+source("01_environment.R", encoding = "UTF-8")
 
-file_name = "codebook.zip"
-file_name_parsed = "codelist_parsed.csv"
+file_name <- "codebook.zip"
+file_name_parsed <- "codelist_parsed.csv"
 
 unzip(zipfile = file_name)
 xml_codes = read_xml("CORPCODE.xml")
