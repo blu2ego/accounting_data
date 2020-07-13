@@ -8,8 +8,7 @@ xml_codes = read_xml("CORPCODE.xml")
 
 xml_codes %>%
   html_nodes(css = "list") %>%
-  lapply("udf1") %>%
+  lapply("xml_child2df") %>%
   do.call(what = "rbind") -> df_codelist
-head(df_codelist)
 
 write.csv(df_codelist, file_name_parsed, row.names = FALSE)
