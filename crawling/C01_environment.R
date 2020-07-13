@@ -1,6 +1,6 @@
-source("00_keys.R")
+source("~/projects/wrangling_accounting_related_data/crawling/C00_keys.R")
 
-library("rvest")
+library(rvest)
 xml_child2df <- function(x){
   x_child <- html_children(x)
   
