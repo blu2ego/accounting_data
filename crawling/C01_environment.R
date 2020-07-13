@@ -1,7 +1,6 @@
-library("rvest")
-
 source("00_keys.R")
 
+library("rvest")
 xml_child2df <- function(x){
   x_child <- html_children(x)
   
