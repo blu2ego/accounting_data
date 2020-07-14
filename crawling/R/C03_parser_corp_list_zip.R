@@ -1,4 +1,4 @@
-source("~/projects/wrangling_accounting_related_data/crawling/01_environment.R", encoding = "UTF-8")
+source("~/projects/wrangling_accounting_related_data/crawling/R/01_environment.R", encoding = "UTF-8")
 
 file_name <- "codebook.zip"
 file_name_parsed <- "codelist_parsed.csv"

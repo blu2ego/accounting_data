@@ -1,4 +1,6 @@
-source("~/projects/wrangling_accounting_related_data/crawling/C00_keys.R")
+# Setting Global Environments
+
+key_dart <- readLines("~/projects/wrangling_accounting_related_data/crawling/sources/key_dart.txt")
 
 library(rvest)
 xml_child2df <- function(x){
