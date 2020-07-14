@@ -21,7 +21,7 @@ for(n in start:nrow(code_list)){
   corp_name <- code_list[n, "corp_name"]
   
   url <- paste0("https://opendart.fss.or.kr/api/list.xml?",
-               "&crtfc_key=", Sys.getenv("key"),
+               "&crtfc_key=", key_dart,
                "&corp_code=", corp_code,
                "&bgn_de=", date_begin,
                "&end_de=", date_end,
