@@ -3,7 +3,7 @@ source("~/projects/wrangling_accounting_related_data/crawling/R/rc01_environment
 code_list <- read.csv("codelist_parsed.csv")
 
 date_begin <- "19800101"
-date_end = gsub(pattern <- "[^0-9]", replacement = "", x = Sys.Date())
+date_end <- gsub(pattern = "[^0-9]", replacement = "", x = Sys.Date())
 last_reprt_at <- "Y"
 doc_type <- "F"
 doc_type_detail <- "F001"
