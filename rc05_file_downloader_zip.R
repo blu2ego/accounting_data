@@ -1,10 +1,14 @@
 source("~/projects/wrangling_accounting_related_data/crawling/R/rc01_environment.R", encoding = "UTF-8")
 
-listt <-  list.files(path = "html",
-                   full.names = TRUE)
+# get document list from specific directory that contains xml files.
+xml_dir_path <- "html"
+listt <- list.files(path = xml_dir_path,
+                    full.names = TRUE)
 
+# create directory to download zip files
 dir.create(path = "doc_list",
            showWarnings = FALSE)
+
 for(n in 1:length(listt)){
   print(n)
   doc <- read_html(listt[n], encoding = "UTF-8")
@@ -18,6 +22,7 @@ for(n in 1:length(listt)){
     url_doc = paste0("https://opendart.fss.or.kr/api/document.xml?",
                      "&crtfc_key=", Sys.getenv("key"),
                      "&rcept_no=", recept_no)
+    
     dir_name <- paste0("doc_", recept_no)
     dir_path <- paste("doc_list", dir_name, sep = "/")
     dir.create(path = dir_path,
