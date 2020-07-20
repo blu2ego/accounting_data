@@ -40,8 +40,10 @@ url <- 'https://play.google.com/store/apps/details?id=com.phonegap.rxpal&hl=en_I
 #Reading the HTML code from the website
 webpage <- read_html(url)
 # Using Xpath
-Name_data_html <- webpage %>% html_nodes(xpath='/html/body/div[1]/div[4]/c-wiz/div/div[2]/div/div[1]/div/c-wiz[1]/c-wiz[1]/div/div[2]/div/div[1]/c-wiz[1]/h1/span')
+Name_data_html <- webpage %>% 
+  html_nodes(xpath='/html/body/div[1]/div[4]/c-wiz/div/div[2]/div/div[1]/div/c-wiz[1]/c-wiz[1]/div/div[2]/div/div[1]/c-wiz[1]/h1/span')
 #Converting the Name data to text
 Name_data <- html_text(Name_data_html)
 #Look at the Name
 head(Name_data)
+Name_data_html
