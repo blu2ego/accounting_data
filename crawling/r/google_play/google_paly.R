@@ -29,3 +29,19 @@ reviews <- html_obj %>% html_nodes(".UD7Dzf") %>% html_text()
 
 # create the df with all the info
 review_data <- data.frame(names = names, stars = stars, reviews = reviews, stringsAsFactors = F)
+
+
+# adding or alternative
+
+#Loading the rvest package
+library('rvest')
+#Specifying the url for desired website to be scrapped
+url <- 'https://play.google.com/store/apps/details?id=com.phonegap.rxpal&hl=en_IN'
+#Reading the HTML code from the website
+webpage <- read_html(url)
+# Using Xpath
+Name_data_html <- webpage %>% html_nodes(xpath='/html/body/div[1]/div[4]/c-wiz/div/div[2]/div/div[1]/div/c-wiz[1]/c-wiz[1]/div/div[2]/div/div[1]/c-wiz[1]/h1/span')
+#Converting the Name data to text
+Name_data <- html_text(Name_data_html)
+#Look at the Name
+head(Name_data)
