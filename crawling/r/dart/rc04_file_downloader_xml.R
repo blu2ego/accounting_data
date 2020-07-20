@@ -8,9 +8,8 @@ last_reprt_at <- "Y"
 doc_type <- "F"
 doc_type_detail <- "F001"
 
-# start = 1
-# start = length(list.files(path = "html/"))
 start <- 3904
+time_delay <- 5
 
 df_report <- data.frame()
 for(n in start:nrow(code_list)){
@@ -33,6 +32,5 @@ for(n in start:nrow(code_list)){
   doc <- read_html(url, encoding = "UTF-8")
   write_xml(doc, paste0("html/doc_list_", corp_code, ".xml"), encoding = "UTF-8")
   
-  closeAllConnections()
-  Sys.sleep(5 + runif(1) * 2)
+  Sys.sleep(time_delay + runif(1) * 2)
 }
