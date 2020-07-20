@@ -14,8 +14,6 @@ time_delay <- 5
 df_report <- data.frame()
 for(n in start:nrow(code_list)){
   print(n)
-  # n = 1
-  # corp_code = "00126186"
   corp_code <- sprintf(fmt = "%08d", code_list[n, "corp_code"])
   corp_name <- code_list[n, "corp_name"]
   
@@ -26,7 +24,7 @@ for(n in start:nrow(code_list)){
                "&end_de=", date_end,
                "&last_reprt_at", last_reprt_at,
                "&pblntf_ty=", doc_type,
-               # "&pblntf_detail_ty=", doc_type_detail,
+               "&pblntf_detail_ty=", doc_type_detail,
                "&page_count=", 100)
   
   doc <- read_html(url, encoding = "UTF-8")
