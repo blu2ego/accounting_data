@@ -6,3 +6,4 @@ Crawling and Processing of Accounting Related Raw Data
 
 1. crawl XMLs from Open DART
 2. crawl PDFs from DART
+3. crawl Google Play Info
