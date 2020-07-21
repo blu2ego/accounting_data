@@ -1,9 +1,9 @@
 source("~/projects/wrangling_accounting_related_data/crawling/r/dart/rc01_environment.R", encoding = "UTF-8")
 
-code_list <- read.csv("codelist_parsed.csv")
+corp_code <- read.csv("~/projects/wrangling_accounting_related_data/results/corp_code/corp_code_parsed_2020-07-21.csv", header = T)
 
 date_begin <- "19800101"
-date_end <- gsub(pattern = "[^0-9]", replacement = "", x = Sys.Date())
+date_end <- gsub(pattern = "[^0-9]", replacement = "", x = base_date)
 last_reprt_at <- "Y"
 doc_type <- "F"
 doc_type_detail <- "F001"

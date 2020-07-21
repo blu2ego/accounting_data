@@ -1,6 +1,7 @@
 source("~/projects/wrangling_accounting_related_data/crawling/r/dart/rc01_environment.R", encoding = "UTF-8")
 
-corp_code_raw <- paste0("corp_code_", Sys.Date(), ".zip")
+corp_code_raw <- paste0("corp_code_", base_date, ".zip")
+corp_code_raw
 
 url_code <- paste0("https://opendart.fss.or.kr/api/corpCode.xml?&crtfc_key=", key_dart)
 
