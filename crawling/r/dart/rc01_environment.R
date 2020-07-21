@@ -16,3 +16,7 @@ xml_child2df <- function(x){
 }
 
 base_date <- Sys.Date()
+
+mainDir <- "~/projects/wrangling_accounting_related_data/results/xmls/"
+xmls_download_Dir <- paste0("xmls_", base_date)
+ifelse(!dir.exists(file.path(mainDir, xmls_download_Dir)), dir.create(file.path(mainDir, xmls_download_Dir)), FALSE)

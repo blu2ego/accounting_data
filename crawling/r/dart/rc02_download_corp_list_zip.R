@@ -1,7 +1,7 @@
 source("~/projects/wrangling_accounting_related_data/crawling/r/dart/rc01_environment.R", encoding = "UTF-8")
 
-corp_code_raw <- paste0("corp_code_", base_date, ".zip")
-corp_code_raw
+corps_code_raw <- paste0("corps_code_", base_date, ".zip")
+corps_code_raw
 
 url_code <- paste0("https://opendart.fss.or.kr/api/corpCode.xml?&crtfc_key=", key_dart)
 
@@ -12,7 +12,7 @@ url_code <- paste0("https://opendart.fss.or.kr/api/corpCode.xml?&crtfc_key=", ke
 # but the problems incurred by a text transfer will only be seen on Windows.
 
 download.file(url = url_code, 
-              destfile = corp_code_raw,
+              destfile = corps_code_raw,
               mode = "wb", 
               quiet = TRUE)
 

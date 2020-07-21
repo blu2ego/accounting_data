@@ -1,6 +1,6 @@
 source("~/projects/wrangling_accounting_related_data/crawling/r/dart/rc01_environment.R", encoding = "UTF-8")
 
-corp_code <- read.csv("~/projects/wrangling_accounting_related_data/results/corp_code/corp_code_parsed_2020-07-21.csv", header = T)
+corps_code <- read.csv("~/projects/wrangling_accounting_related_data/results/corp_code/corps_code_parsed_2020-07-21.csv", header = T)
 
 date_begin <- "19800101"
 date_end <- gsub(pattern = "[^0-9]", replacement = "", x = base_date)
@@ -12,10 +12,10 @@ start <- 3904
 time_delay <- 5
 
 df_report <- data.frame()
-for(n in start:nrow(code_list)){
-  print(n)
-  corp_code <- sprintf(fmt = "%08d", code_list[n, "corp_code"])
-  corp_name <- code_list[n, "corp_name"]
+for(i in start:nrow(corps_code)){
+  print(i)
+  corp_code <- sprintf(fmt = "%08d", corps_code[i, "corp_code"])
+  corp_name <- corps_code[i, "corp_name"]
   
   url <- paste0("https://opendart.fss.or.kr/api/list.xml?",
                "&crtfc_key=", key_dart,
@@ -27,8 +27,9 @@ for(n in start:nrow(code_list)){
                "&pblntf_detail_ty=", doc_type_detail,
                "&page_count=", 100)
   
-  doc <- read_html(url, encoding = "UTF-8")
-  write_xml(doc, paste0("html/doc_list_", corp_code, ".xml"), encoding = "UTF-8")
+  report <- read_html(url, encoding = "UTF-8")
+  write_xml(report, paste0(mainDir, xmls_download_Dir, "/", corp_code, ".xml"), encoding = "UTF-8")
   
   Sys.sleep(time_delay + runif(1) * 2)
 }
+
