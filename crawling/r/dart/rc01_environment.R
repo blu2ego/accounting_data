@@ -15,3 +15,4 @@ xml_child2df <- function(x){
   return(x_df)
 }
 
+base_date <- Sys.Date()
