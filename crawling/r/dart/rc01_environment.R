@@ -22,7 +22,7 @@ mainDir <- "~/projects/wrangling_accounting_related_data/"
 corps_code_download_Dir_zip <- paste0("results/corp_code/zip/")
 corps_code_unzip_Dir_xml <- paste0("results/corp_code/xml/")
 corps_code_parsed_Dir_csv <- paste0("results/corp_code/csv/")
-report_download_Dir_xml <- paste0("results/xmls/xmls_", base_date)
+report_download_Dir_xml <- paste0("results/xmls/xmls_", base_date, "/")
 
 ifelse(!dir.exists(file.path(mainDir, corps_code_download_Dir_zip)), dir.create(file.path(mainDir, corps_code_download_Dir_zip)), FALSE)
 ifelse(!dir.exists(file.path(mainDir, corps_code_unzip_Dir_xml)), dir.create(file.path(mainDir, corps_code_unzip_Dir_xml)), FALSE)
