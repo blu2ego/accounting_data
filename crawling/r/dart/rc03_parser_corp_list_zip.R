@@ -1,4 +1,4 @@
-source("~/projects/wrangling_accounting_related_data/crawling/R/rc01_environment.R", encoding = "UTF-8")
+source("~/projects/wrangling_accounting_related_data/crawling/r/dart/rc01_environment.R", encoding = "UTF-8")
 
 corp_code_parsed <- paste0("corp_code_parsed_", Sys.Date(), ".csv")
 corp_code_parsed
