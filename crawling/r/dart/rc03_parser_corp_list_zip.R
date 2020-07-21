@@ -1,14 +1,14 @@
 source("~/projects/wrangling_accounting_related_data/crawling/R/rc01_environment.R", encoding = "UTF-8")
 
-file_name <- "codebook.zip"
-file_name_parsed <- "codelist_parsed.csv"
+corp_code_parsed <- paste0("corp_code_parsed_", Sys.Date(), ".csv")
+corp_code_parsed
 
-unzip(zipfile = file_name)
+unzip(zipfile = corp_code_raw)
 xml_codes = read_xml("CORPCODE.xml")
 
 xml_codes %>%
   html_nodes(css = "list") %>%
   lapply("xml_child2df") %>%
-  do.call(what = "rbind") -> df_codelist
+  do.call(what = "rbind") -> corp_code
 
-write.csv(df_codelist, file_name_parsed, row.names = FALSE)
+write.csv(corp_code, corp_code_parsed, row.names = FALSE)
