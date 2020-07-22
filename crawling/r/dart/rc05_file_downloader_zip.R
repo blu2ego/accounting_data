@@ -1,25 +1,23 @@
-source("~/projects/wrangling_accounting_related_data/crawling/R/rc01_environment.R", encoding = "UTF-8")
+source("~/projects/wrangling_accounting_related_data/crawling/r/dart/rc01_environment.R", encoding = "UTF-8")
+
+# set working directory
+setwd(file.path(mainDir, audit_report_list_xml_Dir))
 
 # get document list from specific directory that contains xml files.
-xml_dir_path <- "html"
-listt <- list.files(path = xml_dir_path,
-                    full.names = TRUE)
+audit_reports <- list.files(full.names = TRUE)
 
-# create directory to download zip files
-dir.create(path = "doc_list",
-           showWarnings = FALSE)
-
-for(n in 1:length(listt)){
-  print(n)
-  doc <- read_html(listt[n], encoding = "UTF-8")
-  doc %>%
+for(i in 1:length(audit_reports)){
+  print(i)
+  audit_report <- read_html(audit_reports[i], encoding = "UTF-8")
+  audit_report %>%
     html_nodes(css = "list") %>%
     lapply("xml_child2df") %>% 
-    do.call(what = "rbind") -> df_codelist
-  recept_no <- df_codelist[1, "rcept_no"]
+    do.call(what = "rbind") -> df_report_list
+  
+  rcept_no <- df_report_list[i, "rcept_no"]
   
   if(!is.null(recept_no)){
-    url_doc = paste0("https://opendart.fss.or.kr/api/document.xml?",
+    url_doc <- paste0("https://opendart.fss.or.kr/api/document.xml?",
                      "&crtfc_key=", Sys.getenv("key"),
                      "&rcept_no=", recept_no)
     
@@ -35,3 +33,11 @@ for(n in 1:length(listt)){
     file.remove(zip_path)
   }
 }
+
+audit_report <- read_html(audit_reports[1], encoding = "UTF-8")
+audit_report %>%
+  html_nodes(css = "list") %>%
+  lapply("xml_child2df") %>% 
+  do.call(what = "rbind") -> df_codelist
+rcept_no <- df_codelist[1, "rcept_no"]
+
