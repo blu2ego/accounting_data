@@ -12,9 +12,9 @@ for(i in 1:length(audit_reports)){
   audit_report %>%
     html_nodes(css = "list") %>%
     lapply("xml_child2df") %>% 
-    do.call(what = "rbind") -> df_report_list
+    do.call(what = "rbind") -> corp_audit_reports
   
-  rcept_no <- df_report_list[i, "rcept_no"]
+  rcept_no <- corp_audit_reports[1, "rcept_no"] # <- 1개 연도의 감사보고서만 다운로드 됨
   
   if(!is.null(recept_no)){
     url_doc <- paste0("https://opendart.fss.or.kr/api/document.xml?",
@@ -33,11 +33,3 @@ for(i in 1:length(audit_reports)){
     file.remove(zip_path)
   }
 }
-
-audit_report <- read_html(audit_reports[1], encoding = "UTF-8")
-audit_report %>%
-  html_nodes(css = "list") %>%
-  lapply("xml_child2df") %>% 
-  do.call(what = "rbind") -> df_codelist
-rcept_no <- df_codelist[1, "rcept_no"]
-
