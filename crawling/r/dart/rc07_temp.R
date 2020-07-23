@@ -1,5 +1,61 @@
 # 혹시 몰라서 같이 업로드 합니다.
 
+
+#### 파일 정제 ####
+#### ___ 1) A001 ####
+listt = list.files(path = "doc_list_A001/",
+                   full.names = TRUE)
+
+head(listt)
+
+dir.create(path = "doc_list_A001_codes",
+           showWarnings = FALSE)
+for(n in 1:length(listt)){
+  # n = 272
+  doc = read_html(listt[n], encoding = "UTF-8")
+  doc %>%
+    html_nodes(css = "list") %>%
+    lapply("xml_child2df") %>% 
+    do.call(what = "rbind") -> df_codelist
+  if(!is.null(df_codelist[1, "rcept_no"])){
+    df_codelist = df_codelist[grep(pattern = "사업보고서", df_codelist$report_nm), ]
+    
+    if(nrow(df_codelist) >= 1){
+      print(n)
+      print(df_codelist[1, ])
+      write.csv(df_codelist, paste0("doc_list_A001_codes/doc_list_parsed_", df_codelist[1, "corp_code"], ".csv"),
+                row.names = FALSE) 
+    }
+  }
+}
+
+#### ___ 2) F001 ####
+listt = list.files(path = "doc_list_F001/",
+                   full.names = TRUE)
+
+head(listt)
+
+dir.create(path = "doc_list_F001_codes",
+           showWarnings = FALSE)
+for(n in 1:length(listt)){
+  # n = 1
+  doc = read_html(listt[n], encoding = "UTF-8")
+  doc %>%
+    html_nodes(css = "list") %>%
+    lapply("xml_child2df") %>% 
+    do.call(what = "rbind") -> df_codelist
+  if(!is.null(df_codelist[1, "rcept_no"])){
+    if(nrow(df_codelist) >= 1){
+      print(n)
+      print(df_codelist[1, ])
+      write.csv(df_codelist, paste0("doc_list_F001_codes/doc_list_parsed_", df_codelist[1, "corp_code"], ".csv"),
+                row.names = FALSE) 
+    }
+  }
+}
+
+
+
 #### 다운받기 A001 ####
 source("00_environment.R", encoding = "UTF-8")
 code_list = read.csv("codelist_parsed.csv")
