@@ -13,9 +13,7 @@ last_reprt_at = "Y"
 doc_type = "A"
 doc_type_detail = "A001"
 
-# start = 1
-# start = length(list.files(path = "html/"))
-start = 16714
+start = 1
 
 for(n in start:39999){
   print(n)
