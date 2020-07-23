@@ -1,3 +1,82 @@
+# 혹시 몰라서 같이 업로드 합니다.
+
+#### 다운받기 A001 ####
+source("00_environment.R", encoding = "UTF-8")
+code_list = read.csv("codelist_parsed.csv")
+head(code_list)
+
+# code_list[grep(pattern = "삼성", code_list$corp_name), ]
+
+date_begin = "19800101"
+date_end = gsub(pattern = "[^0-9]", replacement = "", x = Sys.Date())
+last_reprt_at = "Y"
+doc_type = "A"
+doc_type_detail = "A001"
+
+# start = 1
+# start = length(list.files(path = "html/"))
+start = 16714
+
+for(n in start:39999){
+  print(n)
+  # n = 1
+  # corp_code = "00126186"
+  corp_code = sprintf(fmt = "%08d", code_list[n, "corp_code"])
+  corp_name = code_list[n, "corp_name"]
+  
+  url = paste0("https://opendart.fss.or.kr/api/list.xml?",
+               "&crtfc_key=", Sys.getenv("key"),
+               "&corp_code=", corp_code,
+               "&bgn_de=", date_begin,
+               "&end_de=", date_end,
+               "&last_reprt_at", last_reprt_at,
+               "&pblntf_ty=", doc_type,
+               "&pblntf_detail_ty=", doc_type_detail,
+               "&page_count=", 100)
+  
+  doc = read_html(url, encoding = "UTF-8")
+  write_xml(doc, paste0("doc_list_A001/doc_list_A001_", corp_code, ".xml"), encoding = "UTF-8")
+  closeAllConnections()
+  Sys.sleep(5 + runif(1) * 2)
+}
+
+#### 다운받기 F001 ####
+source("00_environment.R", encoding = "UTF-8")
+code_list = read.csv("codelist_parsed.csv")
+head(code_list)
+
+date_begin = "19800101"
+date_end = gsub(pattern = "[^0-9]", replacement = "", x = Sys.Date())
+last_reprt_at = "Y"
+doc_type = "F"
+doc_type_detail = "F001"
+
+
+for(n in 1:39999){
+  print(n)
+  # n = 1
+  # corp_code = "00126186"
+  corp_code = sprintf(fmt = "%08d", code_list[n, "corp_code"])
+  corp_name = code_list[n, "corp_name"]
+  
+  url = paste0("https://opendart.fss.or.kr/api/list.xml?",
+               "&crtfc_key=", Sys.getenv("key"),
+               "&corp_code=", corp_code,
+               "&bgn_de=", date_begin,
+               "&end_de=", date_end,
+               "&last_reprt_at", last_reprt_at,
+               "&pblntf_ty=", doc_type,
+               "&pblntf_detail_ty=", doc_type_detail,
+               "&page_count=", 100)
+  
+  doc = read_html(url, encoding = "UTF-8")
+  write_xml(doc, paste0("doc_list_F001/doc_list_F001_", corp_code, ".xml"), encoding = "UTF-8")
+  closeAllConnections()
+  Sys.sleep(5 + runif(1) * 2)
+}
+
+
+
 #### 5. 사업보고서의 감사보고서 ####
 #### ___ 1) pdf ####
 source("00_environment.R", encoding = "UTF-8")
