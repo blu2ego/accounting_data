@@ -18,17 +18,19 @@ base_date <- Sys.Date()
 
 mainDir <- "~/projects/wrangling_accounting_related_data/"
 
-corps_code_zip_Dir <- paste0("results/corps_code/zip/")
-corps_code_unzip_Dir <- paste0("results/corps_code/xml/")
-corps_code_parsed_csv_Dir <- paste0("results/corps_code/csv/")
-
+corps_code_zip_Dir <- "results/corps_code/zip/"
+corps_code_unzip_Dir <- "results/corps_code/xml/"
+corps_code_parsed_csv_Dir <- "results/corps_code/csv/"
 ifelse(!dir.exists(file.path(mainDir, corps_code_zip_Dir)), dir.create(file.path(mainDir, corps_code_zip_Dir)), FALSE)
 ifelse(!dir.exists(file.path(mainDir, corps_code_unzip_Dir)), dir.create(file.path(mainDir, corps_code_unzip_Dir)), FALSE)
 ifelse(!dir.exists(file.path(mainDir, corps_code_parsed_csv_Dir)), dir.create(file.path(mainDir, corps_code_parsed_csv_Dir)), FALSE)
 
-
-audit_report_list_xml_Dir <- paste0("results/audit_report/audit_report_list/", base_date)
-audit_report_zip <- paste0("results/audit_report/zip/", base_date)
-
+audit_report_list_xml_Dir <- paste0("results/audit_report/audit_report_list/", base_date, "/")
+audit_report_zip <- paste0("results/audit_report/zip/", base_date, "/")
 ifelse(!dir.exists(file.path(mainDir, audit_report_list_xml_Dir)), dir.create(file.path(mainDir, audit_report_list_xml_Dir)), FALSE)
 ifelse(!dir.exists(file.path(mainDir, audit_report_zip)), dir.create(file.path(mainDir, audit_report_zip)), FALSE)
+
+biz_report_list_xml_Dir <- paste0("results/biz_report/biz_report_list/", base_date, "/")
+biz_report_zip <- paste0("results/biz_report/zip/", base_date, "/")
+ifelse(!dir.exists(file.path(mainDir, biz_report_list_xml_Dir)), dir.create(file.path(mainDir, biz_report_list_xml_Dir)), FALSE)
+ifelse(!dir.exists(file.path(mainDir, biz_report_zip)), dir.create(file.path(mainDir, biz_report_zip)), FALSE)

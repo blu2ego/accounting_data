@@ -3,7 +3,6 @@ source("~/projects/wrangling_accounting_related_data/crawling/r/dart/rc01_enviro
 # set working directory
 setwd(file.path(mainDir, corps_code_zip_Dir))
 
-
 corps_code_raw <- paste0("corps_code_", base_date, ".zip")
 
 corps_code_request_url <- paste0("https://opendart.fss.or.kr/api/corpCode.xml?&crtfc_key=", "680d964f06e9a576942d805ad2ba2a38d7e5e378")
