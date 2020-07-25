@@ -1,284 +1,310 @@
-# 정리되면 수정 하겠습니다. 
-# 보셔야 될 것 같아서 일단 업로드 부터 해놓습니다.
+library(rvest)
+library(stringi)
+library(jsonlite)
 
-#### [[ ver 1 ]] ####
-listt = list.files(path = "doc_list",
-                   pattern = "xml$",
+listt2 = list.files(path = "doc_list_F001_codes/",
+                    full.names = TRUE)
+head(listt2)
+
+
+listt = list.files(path = "doc_list_F001_xml_download/",
+                   # pattern = "xml$",
                    recursive = TRUE,
                    full.names = TRUE)
-length(listt)
 head(listt)
 
-library("rvest")
-library("stringi")
-library("jsonlite")
+df_listt = data.frame(path = listt,
+                      year = stri_extract(str = listt, regex = "(?<=/)(199[0-9]|20[0-2][0-9])"),
+                      encoding = "CP949")
+df_listt = df_listt[df_listt$year >= 2015, ]
+head(df_listt)
 
-# xml_doc_path <- "doc_list/doc_20200327000723/20200327000723_00760.xml"
-xml_doc_path <- listt[30120]
-xml_doc <- tryCatch(expr = {
-  read_html(xml_doc_path, encoding = "CP949", )
-}, error = function(x){
-  read_html(xml_doc_path, encoding = "UTF-8")  
-})
-# http://dart.fss.or.kr/pdf/download/pdf.do?rcp_no=20200402002061&dcm_no=7231980
-
-xml_doc %>%
-  html_children() %>%
-  html_children() %>%
-  html_children()
-
-xml_doc %>%
-  html_nodes(xpath = "//*/company-name") -> corp_info
-
-corp_info %>% 
-  html_attr("aregcik") -> corp_code
-
-corp_info %>% 
-  html_text() -> corp_name
-corp_name
-
-xml_doc %>%
-  html_nodes(xpath = "//*[@acode]") %>%
-  html_text() %>% 
-  .[1] -> doc_title
-
-xml_doc %>% 
-  html_nodes(xpath = "//*/title[@aassocnote]/..") -> tables
-
-tables %>% 
-  html_children() %>%
-  html_attr(name = "aassocnote") %>% 
-  .[!is.na(.)]
-
-
-
-#### 2. 감사참여자 구분별 인원수 및 감사시간 ####
-xml_doc %>%
-  html_nodes(xpath = '//*/title[@aassocnote="D-0-2-2-0"]/..//title') %>%
-  html_text() -> table_name
-
-xml_doc %>%
-  html_nodes(xpath = '//*/title[@aassocnote="D-0-2-2-0"]/..//tbody') -> table_sub
-
-table_sub[1] %>%
-  html_text() %>% 
-  gsub(pattern = "\n", replacement = "") -> table_sub_comment
-
-table_sub[2] %>%
-  html_nodes(css = "te") %>% 
-  html_attr(name = "acode") -> table_sub_names
-
-table_sub[2] %>%
-  html_nodes(css = "te") %>% 
-  html_text() %>% 
-  ifelse(test = . == "-", yes = NA, no = .) %>%
-  as.numeric() -> table_sub_data
-
-
-df_table_sub = data.frame(var = table_sub_names,
-                          value = table_sub_data)
-df_table_sub
-
-#### 3. 주요 감사실시내용 ####
-# 외부 조회(금융거래조회) 제대로 되는지 다시 확인해야함.
-# 이건 tu태그...
-
-xml_doc %>%
-  html_nodes(xpath = '//*/title[@aassocnote="D-0-2-3-0"]/..//title') %>%
-  html_text() -> table_name
-
-xml_doc %>%
-  html_nodes(xpath = '//*/title[@aassocnote="D-0-2-3-0"]/..//tbody') -> table_sub
-
-table_sub %>%
-  html_nodes(css = "te") %>% 
-  html_attr(name = "acode") -> table_sub_names
-
-table_sub %>%
-  html_nodes(css = "te") %>% 
-  html_text() %>% 
-  ifelse(test = . == "-", yes = NA, no = .) %>%
-  gsub(pattern = "\\&cr;", replacement = "") -> table_sub_data
-
-df_table_sub = data.frame(var = table_sub_names,
-                          value = table_sub_data)
-df_table_sub
-
-
-#### 4. 감사(감사위원회)와의 커뮤니케이션 ####
-# 여러개인 경우 대응 필요
-# n = 30014가 여러개임
-xml_doc %>%
-  html_nodes(xpath = '//*/title[@aassocnote="D-0-2-4-0"]/..//title') %>%
-  html_text() -> table_name
-
-xml_doc %>%
-  html_nodes(xpath = '//*/title[@aassocnote="D-0-2-4-0"]/..//tbody') -> table_sub
-
-table_sub %>%
-  html_nodes(css = "te") %>% 
-  html_attr(name = "acode") -> table_sub_names
-
-table_sub %>%
-  html_nodes(css = "te") %>% 
-  html_text() %>%
-  gsub(pattern = "\\&cr;", replacement = ", ") -> table_sub_data
-
-df_table_sub = data.frame(var = table_sub_names,
-                          value = table_sub_data)
-df_table_sub
-
-#### 내부회계관리제도 감사 또는 검토의견 ####
-xml_doc %>% 
-  html_nodes(xpath = "//*/section-1") %>% 
-  .[[3]] %>%
-  html_children() %>%
-  html_text() %>%
-  gsub(pattern = "\\n|\\&cr;", replacement = " ") %>%
-  gsub(pattern = " {2,}", replacement = " ") %>% 
-  gsub(pattern = "^ | $", replacement = "") -> doc_sub
-
-doc_sub <-  doc_sub[doc_sub != ""]
-
-doc_sub %>%
-  html_nodes(xpath = "title") %>%
-  html_text() -> doc_sub_title
-
-doc_sub %>%
-  html_children() %>%
-  html_text()
-
-doc_sub %>%
-  html_children() %>%
-  html_name()
-
-xml_doc %>% 
-  html_nodes(xpath = "//*/section-1") %>% 
-  .[[3]] %>% 
-  html_nodes(xpath = "table") %>% 
-  html_text()
-
-#### 독립된 감사인의 감사보고서 중 핵심감사사항 ####
-xml_doc %>% 
-  html_nodes(xpath = "//*/section-1") %>% 
-  .[[1]] %>% 
-  html_children() %>% 
-  html_text() %>% 
-  gsub(pattern = "\\n|\\&cr;", replacement = " ") %>%
-  gsub(pattern = " {2,}", replacement = " ") %>% 
-  gsub(pattern = "^ | $", replacement = "") -> doc_sub
-
-doc_sub = doc_sub[doc_sub != ""]
-
-doc_sub_loc1 = grep(pattern = "^핵심감사", doc_sub)[1]
-doc_sub_loc2 = grep(pattern = "^재무제표.*?책임$", doc_sub)[1]
-doc_sub[(doc_sub_loc1 + 2):(doc_sub_loc2 - 1)] 
-
-
-#### [[ ver 2 ]]  ####
-listt = list.files(path = "doc_list",
-                   pattern = "xml$",
-                   recursive = TRUE,
-                   full.names = TRUE)
-length(listt)
-head(listt)
-
-library("rvest")
-library("stringi")
-library("jsonlite")
-
-# 4, 5
-xml_doc_path = listt[993]
-xml_doc <- read_html(xml_doc_path,
-                     encoding = "CP949")
-
-
-xml_doc %>%
-  html_nodes(xpath = "//*/company-name") -> corp_info
-
-corp_info %>% 
-  html_attr("aregcik") -> corp_code
-
-corp_info %>% 
-  html_text() -> corp_name
-corp_name
-
-xml_doc %>%
-  html_nodes(xpath = "//*[@acode]") %>%
-  html_text() %>% 
-  .[1] -> doc_title
-
-if(doc_title == ""){
-  # 없으면 패스해야함...
-}
-
-xml_doc %>%
-  html_children() %>%
-  html_children() %>% 
-  html_children() %>%
-  html_children() %>%
-  html_text()
-
-#### [[ ver 3 ]] ####
-listt = list.files(path = "doc_list",
-                   pattern = "xml$",
-                   recursive = TRUE,
-                   full.names = TRUE)
-length(listt)
-head(listt)
-
-library("rvest")
-library("stringi")
-library("jsonlite")
-
-df_doc_info = data.frame()
-for(n in 14300:14600){
-  # n = 14303
-  print(n)
-  xml_doc_path = listt[n]
-  
+# options(warn = 2) # 경고가 발생하면 멈추게 함
+# options(warn = 1) # 기본옵션
+for(n_file in 1:nrow(df_listt)){ # nrow(df_listt)
+  # n_file = 9
+  print(n_file)
   xml_doc <- tryCatch(expr = {
-    read_html(xml_doc_path, encoding = "CP949", )
+    read_html(df_listt[n_file, "path"], encoding = "CP949")
   }, error = function(x){
-    read_html(xml_doc_path, encoding = "UTF-8")  
+    return(read_html(df_listt[n_file, "path"], encoding = "UTF-8"))
+    df_listt[n_file, "encoding"] = "UTF-8"
   })
-  # rm(xml_doc)
   
   xml_doc %>%
     html_nodes(xpath = "//*/company-name") -> corp_info
   
-  if(length(corp_info) > 0){
-    corp_info %>% 
-      html_attr("aregcik") -> corp_code
-    
-    corp_info %>% 
-      html_text() -> corp_name
+  corp_info %>% 
+    html_attr("aregcik") -> corp_code
+  
+  corp_info %>% 
+    html_text() -> corp_name
+  
+  xml_doc %>%
+    html_nodes(xpath = "//*/document-name") %>%
+    html_attr("acode") -> doc_code
+  
+  xml_doc %>%
+    html_nodes(xpath = "//*/document-name") %>%
+    html_text() -> doc_title
+  
+  xml_doc %>% 
+    html_nodes(xpath = "//*/title[@aassocnote]/..") -> tables
+  
+  tables %>% 
+    html_children() %>%
+    html_attr(name = "aassocnote") %>% 
+    .[!is.na(.)] -> table_list
+  # print(table_list)
+  
+  xml_doc %>%
+    html_nodes(xpath = '//*/tu[@aunit="SUB_PERIODTO"]') %>% 
+    html_text() %>% 
+    gsub(pattern = "[^0-9]", replacement = "") -> audit_date_end
+  
+  # audit hour table
+  xml_doc %>%
+    html_nodes(xpath = '//*/title[@aassocnote="D-0-2-2-0"]/..//title') %>%
+    html_text() -> table_name
+  
+  xml_doc %>%
+    html_nodes(xpath = '//*/title[@aassocnote="D-0-2-2-0"]/..//tbody') -> table_sub
+  
+  table_sub[1] %>%
+    html_text() %>% 
+    gsub(pattern = "\n", replacement = "") -> table_sub_comment
+  
+  table_sub[2] %>%
+    html_nodes(css = "te") %>% 
+    html_attr(name = "acode") -> table_sub_names
+  
+  table_sub[2] %>%
+    html_nodes(css = "te") %>% 
+    html_text() %>% 
+    gsub(pattern = "[^0-9]", replacement = "") %>% 
+    ifelse(test = . == "", yes = NA, no = .) %>%
+    as.numeric() -> table_sub_data
+  
+  
+  df_table_hour = data.frame(var = table_sub_names,
+                             value = table_sub_data)
+  table_hour_name = table_name
+  table_hour_etc = table_sub_comment
+  
+  # main audit
+  xml_doc %>%
+    html_nodes(xpath = '//*/title[@aassocnote="D-0-2-3-0"]/..//title') %>%
+    html_text() -> table_name
+  
+  xml_doc %>%
+    html_nodes(xpath = '//*/title[@aassocnote="D-0-2-3-0"]/..//tbody') -> table_sub
+  
+  table_sub %>%
+    html_nodes(css = "te") %>% 
+    html_attr(name = "acode") -> table_sub_names
+  
+  table_sub %>%
+    html_nodes(css = "te") %>% 
+    html_text() %>% 
+    ifelse(test = . == "-", yes = NA, no = .) %>%
+    gsub(pattern = "\\&cr;|\\n", replacement = "") -> table_sub_data
+  
+  df_table_main_audit = data.frame(var = table_sub_names,
+                                   value = table_sub_data)
+  table_main_audit_name = table_name
+  
+  # communication
+  if(sum(table_list %in% "D-0-2-4-0") == 1){
+    xml_doc %>%
+      html_nodes(xpath = '//*/title[@aassocnote="D-0-2-4-0"]/..//title') %>%
+      html_text() -> table_name
     
     xml_doc %>%
-      html_nodes(xpath = "//*[@acode]") %>%
-      html_text() %>% 
-      .[1] -> doc_title
+      html_nodes(xpath = '//*/title[@aassocnote="D-0-2-4-0"]/..//tbody') -> table_sub
     
-    xml_doc %>% 
-      html_nodes(xpath = "//*/table") %>%
+    table_sub %>%
+      html_nodes(css = "te") %>% 
+      html_attr(name = "acode") -> table_sub_names
+    
+    table_sub %>%
+      html_nodes(css = "te") %>% 
       html_text() %>%
-      .[1] %>%
-      gsub(pattern = "\\n", replacement = " ")-> doc_date
+      gsub(pattern = "\\&cr;", replacement = ", ") -> table_sub_data
     
-    # print(c(n, corp_name, doc_title, doc_date)) 
-    df_doc_info_sub = data.frame(n = n,
-                                 corp_name = corp_name,
-                                 title = doc_title,
-                                 date = doc_date)
+    df_table_com = data.frame(var = table_sub_names,
+                              value = table_sub_data)
     
-    df_doc_info = rbind(df_doc_info, df_doc_info_sub)
+    df_table_com[, "obs"] = rep(1:(nrow(df_table_com)/4), each = 4)
+    df_table_com = reshape2::dcast(df_table_com, formula = "obs ~ var", value.var = "value", fill = NA)
+    
+    table_sub_com_name = table_name
+  } else {
+    df_table_com = data.frame()
+    table_sub_com_name = ""
   }
+  
+  # audit opinion
+  if(sum(table_list %in% "D-0-0-1-0") == 1){
+    xml_doc %>%
+      html_nodes(xpath = "//*/section-1/title[@aassocnote='D-0-0-1-0']/..") %>% 
+      html_children() -> xml_doc_report
+    
+    xml_doc_report[1] %>% 
+      html_text() -> xml_doc_report_title
+    
+    xml_doc_report[-1] %>% 
+      as.character() %>% 
+      strsplit(split = "\\n|&cr;|cr;|&amp") %>% 
+      unlist() -> xml_doc_report_text
+    
+    xml_doc_report_text_pos = grep(pattern = "usermark.{2,5}B", x = xml_doc_report_text)
+    xml_doc_report_text_pos = xml_doc_report_text_pos[nchar(xml_doc_report_text[xml_doc_report_text_pos]) < 50]
+    
+    xml_doc_report_text[xml_doc_report_text_pos] = paste0("@", xml_doc_report_text[xml_doc_report_text_pos]) 
+    
+    xml_doc_report_text %>% 
+      gsub(pattern = "<.*?>", replacement = "") %>% 
+      gsub(pattern = " {2,}", replacement = " ") %>% 
+      gsub(pattern = "^ | $|;$", replacement = "") -> xml_doc_report_text
+    
+    xml_doc_report_text = xml_doc_report_text[!(xml_doc_report_text %in% c("", "@"))]
+    
+    xml_doc_report_date_pos = grep(pattern = "^[0-9]{4}..[0-9]{1,2}", xml_doc_report_text)[1]
+    if(is.na(xml_doc_report_date_pos) == FALSE){
+      xml_doc_report_text = c(xml_doc_report_text[1:(xml_doc_report_date_pos - 1)],
+                              paste(xml_doc_report_text[xml_doc_report_date_pos:length(xml_doc_report_text)], collapse = " "))    
+      xml_doc_report_text = xml_doc_report_text[nchar(xml_doc_report_text) > 1]
+    } 
+    
+    list_doc_report = xml_doc_report_text
+  } else {
+    list_doc_report = ""
+  }
+  
+  
+  df_corp_info = read.csv(grep(pattern = corp_code, x = listt2, value = TRUE))
+  # head(df_corp_info)
+  
+  recept_no = stri_extract(str = listt[n_file], regex = "(?<=\\/)[0-9]{14}")
+  doc_loc = grep(pattern = recept_no, df_corp_info$rcept_no)
+  
+  meta_report_audit <- list("fiscal_year" = substr(audit_date_end, start = 1, stop = 4), 
+                            "year_end" = substr(audit_date_end, start = 5, stop = 8), 
+                            "corp_cls" = df_corp_info[1, "corp_cls"], 
+                            "corp_name" = corp_name,
+                            "corp_code" = corp_code, 
+                            "stock_code" = df_corp_info[1, "stock_code"], 
+                            "report_name" = doc_title,  
+                            "rcept_no" = recept_no, 
+                            "flr_name" = df_corp_info[1, "flr_nm"], 
+                            "rcept_dt" = df_corp_info[doc_loc, "rcept_dt"], 
+                            "rm" = df_corp_info[doc_loc, "rm"],
+                            "turn" = "51")
+  
+  # df_table_hour_this_yr = df_table_hour[grep(pattern = "TH$", x = df_table_hour$var), ]
+  
+  
+  # 내부회계관리제도 감사
+  xml_doc %>% 
+    html_nodes(xpath = "//*/section-1/image/..") %>% 
+    html_children() -> xml_doc_internal
+  
+  
+  xml_doc_internal[1] %>% 
+    html_text() -> xml_doc_report_title
+  
+  xml_doc_internal[-1] %>% 
+    as.character() %>% 
+    strsplit(split = "\\n|&cr;|cr;|&amp") %>% 
+    unlist() -> xml_doc_internal_text 
+  
+  xml_doc_internal_text_pos = grep(pattern = "usermark", x = xml_doc_internal_text)
+  
+  xml_doc_internal_text[xml_doc_internal_text_pos] = paste0("@", xml_doc_internal_text[xml_doc_internal_text_pos]) 
+  
+  xml_doc_internal_text %>% 
+    gsub(pattern = "<.*?>", replacement = "") %>% 
+    gsub(pattern = " {2,}", replacement = " ") %>% 
+    gsub(pattern = "^ | $|;$", replacement = "") -> xml_doc_internal_text
+  
+  list_doc_internal = xml_doc_internal_text
+  
+  
+  
+  auditors <- list(quality_ctrl = list("품질관리검토자" = df_table_hour[df_table_hour$var == "NUM_QLT_TH", "value"]), 
+                   cpa = list("감사업무 담당 회계사" = list("담당이사" = df_table_hour[df_table_hour$var == "NUM_ACT_TH", "value"], 
+                                                   "등록 공인회계사" = df_table_hour[df_table_hour$var == "NUM_ACR_TH", "value"], 
+                                                   "수습 공인회계사" = df_table_hour[df_table_hour$var == "NUM_ACP_TH", "value"])), 
+                   prf = list("전산감사 등 전문가" = df_table_hour[df_table_hour$var == "NUM_EXP_TH", "value"], 
+                              "수주산업 등 전문가" = df_table_hour[df_table_hour$var == "NUM_COT_TH", "value"]))
+  
+  # 외부감사 실시 내용 중 투입 시간 정보(분/반기)
+  auditors_time_periodic <- list(quality_ctrl_time_periodic = list("품질관리검토자" = df_table_hour[df_table_hour$var == "TMA_QLT_TH", "value"]), 
+                                 cpa_time_periodic = list("감사업무 담당 회계사" = list("담당이사" = df_table_hour[df_table_hour$var == "TMA_ACT_TH", "value"],
+                                                                               "등록 공인회계사" = df_table_hour[df_table_hour$var == "TMA_ACR_TH", "value"], 
+                                                                               "수습 공인회계사" = df_table_hour[df_table_hour$var == "TMA_ACP_TH", "value"])),
+                                 prf_time_periodic = list("전산감사 등 전문가" = df_table_hour[df_table_hour$var == "TMA_EXP_TH", "value"], 
+                                                          "수주산업 등 전문가" = df_table_hour[df_table_hour$var == "TMA_COT_TH", "value"]))
+  
+  # 외부감사 실시 내용 중 투입 시간 정보(기말)
+  auditors_time_yearend <- list(quality_ctrl_time_yearend = list("품질관리검토자" = df_table_hour[df_table_hour$var == "TMY_QLT_TH", "value"]),
+                                cpa_time_yearend = list("감사업무 담당 회계사" = list("담당이사" = df_table_hour[df_table_hour$var == "TMY_ACT_TH", "value"], 
+                                                                             "등록 공인회계사" = df_table_hour[df_table_hour$var == "TMY_ACR_TH", "value"], 
+                                                                             "수습 공인회계사" = df_table_hour[df_table_hour$var == "TMY_ACP_TH", "value"])),
+                                prf_time_yearend = list("전산감사 등 전문가" = df_table_hour[df_table_hour$var == "TMY_EXP_TH", "value"], 
+                                                        "수주산업 등 전문가" = df_table_hour[df_table_hour$var == "TMY_COT_TH", "value"]))
+  
+  # 외부 감사 실시 내용(집합)
+  external_audit_contents <- list("보고서" = meta_report_audit, 
+                                  "감사참여자 구분별 인원수 및 감사시간" = list("투입 인원수" = auditors, 
+                                                                "분/반기검토(시간)" = auditors_time_periodic,
+                                                                "감사(시간)" = auditors_time_yearend))
+  
+  # 외부 감사 실시 내용(집합)을 josn으로 변형
+  external_audit_contents <- jsonlite::toJSON(external_audit_contents, pretty = TRUE, auto_unbox = TRUE)
+  external_audit_contents = iconv(external_audit_contents, from = "UTF-8", to = "CP949")
+  
+  # [[ write files ]]
+  dir_path_base = "doc_list_F001_xml_download_to_json/"
+  dir_corp = paste0("corp_no_", corp_code)
+  dir.create(path = paste0(dir_path_base, dir_corp), showWarnings = FALSE)
+  
+  dir_path = paste0("./", dir_path_base, dir_corp, "/")
+  
+  # json 파일로 writing - external
+  file_name_external = paste(corp_code,  
+                             substr(audit_date_end, start = 1, stop = 4),
+                             recept_no, 
+                             doc_code,
+                             "external_audit_contents.json", sep = "_")
+  write(external_audit_contents, 
+        paste0(dir_path, file_name_external))
+  
+  
+  # 내부회계관리제도 감사 또는 검토 의견 중 독립된 감사인의 내부회계관리제도 감사보고서
+  internal_accounting_audit <- list(list_doc_report)
+  
+  # 내부회계관리제도 감사 또는 검토 의견 중 회사의 내부회계관리제도 운영실태보고서
+  internal_accounting_operation <- list(list_doc_internal)
+  
+  # 내부회계관리제도 감사 또는 검토 의견(집합)
+  internal_accounting_contents <- list("보고서" = meta_report_audit, 
+                                       "독립된 감사인의 내부회계관리제도 감사보고서" = internal_accounting_audit, 
+                                       "내부회계관리제도 운영실태 보고" = internal_accounting_operation)
+  
+  
+  # 내부회계관리제도 감사 또는 검토 의견(집합)을 json으로 변형
+  internal_accounting_contents <- jsonlite::toJSON(internal_accounting_contents, pretty = TRUE, auto_unbox = TRUE)
+  internal_accounting_contents = iconv(internal_accounting_contents, from = "UTF-8", to = "CP949")
+  
+  # json 파일로 writing - internal
+  file_name_internal = paste(corp_code,  
+                             substr(audit_date_end, start = 1, stop = 4),
+                             recept_no, 
+                             doc_code,
+                             "internal_accounting_contents.json", sep = "_")
+  
+  write(internal_accounting_contents,
+        paste0(dir_path, file_name_internal)) 
+  
 }
-tail(df_doc_info)
-
-# write.csv(df_doc_info, "doc_list_xml_file_info.csv", row.names = FALSE)
-
-table(substr(df_doc_info$date, start = 1, stop = 5))
-df_doc_info$corp_name
-
-df_doc_info[!grepl(pattern = "^[0-9]", df_doc_info$date), ]
