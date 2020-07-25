@@ -265,6 +265,7 @@ for(n_file in 1:nrow(df_listt)){ # nrow(df_listt)
   external_audit_contents = iconv(external_audit_contents, from = "UTF-8", to = "CP949")
   
   # [[ write files ]]
+  # write - json
   dir_path_base = "doc_list_F001_xml_download_to_json/"
   dir_corp = paste0("corp_no_", corp_code)
   dir.create(path = paste0(dir_path_base, dir_corp), showWarnings = FALSE)
@@ -307,4 +308,19 @@ for(n_file in 1:nrow(df_listt)){ # nrow(df_listt)
   write(internal_accounting_contents,
         paste0(dir_path, file_name_internal)) 
   
+  # write - rds
+  dir_path_base_rds = "doc_list_F001_xml_download_to_rds/"
+  dir_corp = paste0("corp_no_", corp_code)
+  dir.create(path = paste0(dir_path_base_rds, dir_corp), showWarnings = FALSE)
+  
+  dir_path = paste0("./", dir_path_base, dir_corp, "/")
+  
+  file_name_rds = paste(corp_code,  
+                        substr(audit_date_end, start = 1, stop = 4),
+                        recept_no, 
+                        doc_code,
+                        "contents_both.rds", sep = "_")
+  saveRDS(list(internal = internal_accounting_contents,
+               external = external_audit_contents),
+          paste0(dir_path, file_name_rds))
 }
