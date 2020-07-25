@@ -260,27 +260,9 @@ for(n_file in 1:nrow(df_listt)){ # nrow(df_listt)
                                                                 "분/반기검토(시간)" = auditors_time_periodic,
                                                                 "감사(시간)" = auditors_time_yearend))
   
-  # 외부 감사 실시 내용(집합)을 josn으로 변형
+  # 외부 감사 실시 내용(집합)을 json으로 변형
   external_audit_contents <- jsonlite::toJSON(external_audit_contents, pretty = TRUE, auto_unbox = TRUE)
   external_audit_contents = iconv(external_audit_contents, from = "UTF-8", to = "CP949")
-  
-  # [[ write files ]]
-  # write - json
-  dir_path_base = "doc_list_F001_xml_download_to_json/"
-  dir_corp = paste0("corp_no_", corp_code)
-  dir.create(path = paste0(dir_path_base, dir_corp), showWarnings = FALSE)
-  
-  dir_path = paste0("./", dir_path_base, dir_corp, "/")
-  
-  # json 파일로 writing - external
-  file_name_external = paste(corp_code,  
-                             substr(audit_date_end, start = 1, stop = 4),
-                             recept_no, 
-                             doc_code,
-                             "external_audit_contents.json", sep = "_")
-  write(external_audit_contents, 
-        paste0(dir_path, file_name_external))
-  
   
   # 내부회계관리제도 감사 또는 검토 의견 중 독립된 감사인의 내부회계관리제도 감사보고서
   internal_accounting_audit <- list(list_doc_report)
@@ -298,7 +280,25 @@ for(n_file in 1:nrow(df_listt)){ # nrow(df_listt)
   internal_accounting_contents <- jsonlite::toJSON(internal_accounting_contents, pretty = TRUE, auto_unbox = TRUE)
   internal_accounting_contents = iconv(internal_accounting_contents, from = "UTF-8", to = "CP949")
   
-  # json 파일로 writing - internal
+  # [[ write files ]]
+  dir_corp = paste0("corp_no_", corp_code)
+  
+  # write - json
+  dir_path_base_json = "doc_list_F001_xml_download_to_json/"
+  dir.create(path = paste0(dir_path_base_json, dir_corp), showWarnings = FALSE)
+  
+  dir_path_json = paste0("./", dir_path_base, dir_corp, "/")
+  
+  # json writing - external
+  file_name_external = paste(corp_code,  
+                             substr(audit_date_end, start = 1, stop = 4),
+                             recept_no, 
+                             doc_code,
+                             "external_audit_contents.json", sep = "_")
+  write(external_audit_contents, 
+        paste0(dir_path_json, file_name_external))
+  
+  # json writing - internal
   file_name_internal = paste(corp_code,  
                              substr(audit_date_end, start = 1, stop = 4),
                              recept_no, 
@@ -306,14 +306,14 @@ for(n_file in 1:nrow(df_listt)){ # nrow(df_listt)
                              "internal_accounting_contents.json", sep = "_")
   
   write(internal_accounting_contents,
-        paste0(dir_path, file_name_internal)) 
+        paste0(dir_path_json, file_name_internal)) 
   
   # write - rds
   dir_path_base_rds = "doc_list_F001_xml_download_to_rds/"
   dir_corp = paste0("corp_no_", corp_code)
   dir.create(path = paste0(dir_path_base_rds, dir_corp), showWarnings = FALSE)
   
-  dir_path = paste0("./", dir_path_base, dir_corp, "/")
+  dir_path_rds = paste0("./", dir_path_base_rds, dir_corp, "/")
   
   file_name_rds = paste(corp_code,  
                         substr(audit_date_end, start = 1, stop = 4),
@@ -322,5 +322,5 @@ for(n_file in 1:nrow(df_listt)){ # nrow(df_listt)
                         "contents_both.rds", sep = "_")
   saveRDS(list(internal = internal_accounting_contents,
                external = external_audit_contents),
-          paste0(dir_path, file_name_rds))
+          paste0(dir_path_rds, file_name_rds))
 }
