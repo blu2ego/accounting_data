@@ -287,7 +287,7 @@ for(n_file in 1:nrow(df_listt)){ # nrow(df_listt)
   dir_path_base_json = "doc_list_F001_xml_download_to_json/"
   dir.create(path = paste0(dir_path_base_json, dir_corp), showWarnings = FALSE)
   
-  dir_path_json = paste0("./", dir_path_base, dir_corp, "/")
+  dir_path_json = paste0("./", dir_path_base_json, dir_corp, "/")
   
   # json writing - external
   file_name_external = paste(corp_code,  
