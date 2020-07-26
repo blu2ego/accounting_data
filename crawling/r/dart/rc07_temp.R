@@ -1,17 +1,11 @@
-# 혹시 몰라서 같이 업로드 합니다.
-
-
 #### 파일 정제 ####
 #### ___ 1) A001 ####
 listt <- list.files(path = "doc_list_A001/",
                     full.names = TRUE)
 
-head(listt)
-
 dir.create(path = "doc_list_A001_codes",
            showWarnings = FALSE)
 for(n in 1:length(listt)){
-  # n = 272
   doc <- read_html(listt[n], encoding = "UTF-8")
   doc %>%
     html_nodes(css = "list") %>%
@@ -33,12 +27,9 @@ for(n in 1:length(listt)){
 listt <- list.files(path = "doc_list_F001/",
                    full.names = TRUE)
 
-head(listt)
-
 dir.create(path = "doc_list_F001_codes",
            showWarnings = FALSE)
 for(n in 1:length(listt)){
-  # n = 1
   doc <- ead_html(listt[n], encoding = "UTF-8")
   doc %>%
     html_nodes(css = "list") %>%
@@ -55,13 +46,9 @@ for(n in 1:length(listt)){
 }
 
 
-
 #### 다운받기 A001 ####
 source("00_environment.R", encoding = "UTF-8")
 code_list <- read.csv("codelist_parsed.csv")
-head(code_list)
-
-# code_list[grep(pattern = "삼성", code_list$corp_name), ]
 
 date_begin <- "19800101"
 date_end <- gsub(pattern = "[^0-9]", replacement = "", x = Sys.Date())
@@ -73,8 +60,6 @@ start <- 1
 
 for(n in start:39999){
   print(n)
-  # n <- 1
-  # corp_code <- "00126186"
   corp_code <- sprintf(fmt = "%08d", code_list[n, "corp_code"])
   corp_name <- code_list[n, "corp_name"]
   
@@ -97,7 +82,6 @@ for(n in start:39999){
 #### 다운받기 F001 ####
 source("00_environment.R", encoding = "UTF-8")
 code_list <- read.csv("codelist_parsed.csv")
-head(code_list)
 
 date_begin <- "19800101"
 date_end <- gsub(pattern = "[^0-9]", replacement = "", x = Sys.Date())
@@ -108,8 +92,6 @@ doc_type_detail <- "F001"
 
 for(n in 1:39999){
   print(n)
-  # n <- 1
-  # corp_code <- "00126186"
   corp_code <- sprintf(fmt = "%08d", code_list[n, "corp_code"])
   corp_name <- code_list[n, "corp_name"]
   
@@ -129,20 +111,16 @@ for(n in 1:39999){
   Sys.sleep(5 + runif(1) * 2)
 }
 
-
-
 #### 5. 사업보고서의 감사보고서 ####
 #### ___ 1) pdf ####
 source("00_environment.R", encoding = "UTF-8")
 listt <- list.files(path = "doc_list_A001_codes/",
                     full.names = TRUE)
-head(listt)
 
 url_base <- "http://dart.fss.or.kr/dsaf001/main.do?rcpNo="
 url_base_pdf <- "http://dart.fss.or.kr/pdf/download/pdf.do?"
 
 for(n_file in 1:10000){
-  # n_file <- 1
   df_code <- read.csv(listt[n_file])
   df_code[, "year"] <- as.numeric(stri_extract(str = df_code$report_nm, regex = "[0-9]{4}"))
   df_code <- df_code[df_code$year >= 2014, ]
@@ -155,7 +133,6 @@ for(n_file in 1:10000){
     dir.create(path <- path_dir, showWarnings = FALSE)
     
     for(n_row in 1:nrow(df_code)){
-      # n_row <- 1
       doc_no <- as.character(df_code[n_row, "rcept_no"])
       url <- paste0(url_base, doc_no)
       
@@ -177,17 +154,15 @@ for(n_file in 1:10000){
     } 
   }
 }
+
 #### ___ 2) xml ####
 source("00_environment.R", encoding = "UTF-8")
 listt <- list.files(path = "doc_list_A001_codes/",
                     full.names = TRUE)
-head(listt)
 
 for(n_file in 1:length(listt)){
-  # n_file <- 1
   df_code <- read.csv(listt[n_file])
   df_code[, "year"] <- as.numeric(stri_extract(str = df_code$report_nm, regex = "[0-9]{4}"))
-  # df_code <- df_code[df_code$year >= 2014, ]
   print(df_code[1, ])
   
   corp_code <- sprintf(fmt = "%08d", df_code[1, "corp_code"])
@@ -196,7 +171,6 @@ for(n_file in 1:length(listt)){
   dir.create(path = path_dir, showWarnings = FALSE)
   
   for(n_row in 1:nrow(df_code)){
-    # n_row <- 1
     recept_no <- as.character(df_code[n_row, "rcept_no"])
     
     url_doc <- paste0("https://opendart.fss.or.kr/api/document.xml?",
@@ -220,7 +194,6 @@ for(n_file in 1:length(listt)){
 }
 
 
-
 #### 6. 감사보고서 ####
 #### ___ 1) pdf ####
 source("00_environment.R", encoding = "UTF-8")
@@ -229,13 +202,11 @@ library(rvest)
 library(stringi)
 listt <- list.files(path = "doc_list_F001_codes/",
                     full.names = TRUE)
-head(listt)
 
 url_base <- "http://dart.fss.or.kr/dsaf001/main.do?rcpNo="
 url_base_pdf <- "http://dart.fss.or.kr/pdf/download/pdf.do?"
 
 for(n_file in 35202:40000){
-  # n_file <- 1
   df_code <- read.csv(listt[n_file])
   df_code[, "year"] <- as.numeric(stri_extract(str = df_code$report_nm, regex = "[0-9]{4}"))
   df_code <- df_code[df_code$year >= 2014, ]
@@ -248,7 +219,6 @@ for(n_file in 35202:40000){
     dir.create(path = path_dir, showWarnings = FALSE)
     
     for(n_row in 1:nrow(df_code)){
-      # n_row <- 1
       doc_no <- as.character(df_code[n_row, "rcept_no"])
       url <- paste0(url_base, doc_no)
       
@@ -267,18 +237,13 @@ for(n_file in 35202:40000){
     } 
   }
 }
+
 #### ___ 2) xml ####
 source("00_environment.R", encoding = "UTF-8")
-# setwd("~/06_outsourcing/crawling_woojune")
-# getwd()
-# library(stringi)
 listt <- list.files(path = "doc_list_F001_codes/",
                     full.names = TRUE)
-head(listt)
-length(listt)
 
 for(n_file in 1:10000){
-  # n_file <- 1
   df_code <- read.csv(listt[n_file])
   df_code[, "year"] <- as.numeric(stri_extract(str = df_code$report_nm, regex = "[0-9]{4}"))
   print(n_file)
@@ -289,7 +254,6 @@ for(n_file in 1:10000){
   dir.create(path = path_dir, showWarnings = FALSE)
   
   for(n_row in 1:nrow(df_code)){
-    # n_row <- 1
     recept_no <- as.character(df_code[n_row, "rcept_no"])
     
     url_doc <- paste0("https://opendart.fss.or.kr/api/document.xml?",
