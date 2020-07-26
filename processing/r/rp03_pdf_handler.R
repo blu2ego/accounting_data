@@ -1,17 +1,13 @@
-# 수정 예정입니다.
+source("~/projects/wrangling_accounting_related_data/processing/r/dart/rp01_environment.R", encoding = "UTF-8")
 
-library(stringi)
-library(tabulizer)
-
-listt = list.files(path = "pdfs/",
+listt = list.files(path = audit_report_pdf,
+                   recursive = TRUE,
                    full.names = TRUE)
-head(listt)
 
 n = 2
-# tbl <- extract_tables(file = listt[2], encoding = "UTF-8", method = "stream")
-tbl <- extract_tables(file = "doc_list_A001_pdf_download/corp_no_00101220/doc_A001_00101220_2019.pdf", encoding = "UTF-8", method = "stream")
+tbl <- extract_tables(file = listt[n], encoding = "UTF-8", method = "stream")
 tbl_cnt <- length(tbl)
-tbl[[tbl_cnt]]
+# tbl[[tbl_cnt]]
 
 #### 1. 테이블 정의 ####
 #### ___ ● 감사대상업무 ####
@@ -28,7 +24,7 @@ for(n_tbl in 5:2){
 #### ___ ● 감사 시간 ####
 tbl_check_word <- "투입 인원수"
 
-for(n_tbl in 5:2){
+for(n_tbl in 5:1){
   tbl_sub <- tbl[[tbl_cnt - n_tbl]]
   tbl_check <- sum(grepl(pattern = tbl_check_word, tbl_sub[, 1]))
   if(tbl_check > 0){
@@ -43,7 +39,7 @@ for(n_tbl in 5:2){
 tbl_check_word <- c("전반감사계획", "외부전문가 활용")
 
 tbl_flag <- 0
-for(n_tbl in 3:0){
+for(n_tbl in 3:1){
   tbl_sub <- tbl[[tbl_cnt - n_tbl]]
   tbl_check <- sum(grepl(pattern = paste(tbl_check_word, collapse = "|"), tbl_sub[, 1]))
   
@@ -113,7 +109,7 @@ df_tbl_03_detail_01
 # 2col 에서 날짜가 처음 등장하는 위치.
 tbl_03_pos_02 <- c(grep(pattern = "^[0-9]{4}", tbl_03_detail[, 2])[1], 
                    min(grep(pattern = "^실사", tbl_03_detail[, 1])[1],
-                       grep(pattern = "^실사", tbl_03_detail[, 2])[1]) - 1)
+                       grep(pattern = "^실사", tbl_03_detail[, 2])[1], na.rm = TRUE) - 1)
 
 tbl_03_detail_02 <- tbl_03_detail[tbl_03_pos_02[1]:tbl_03_pos_02[2], ]
 
@@ -203,105 +199,95 @@ df_tbl_03_detail_06
 #### ______ 7) 외부전문가활용 ####
 tbl_03_pos_06 <- c(grep(pattern = "^외부전문가", tbl_03_detail[, 1]),
                    grep(pattern = "^감사", tbl_03_detail[, 2]))
-
-if(tbl_03_pos_06[1] > tbl_03_pos_06[2]){
-  tbl_03_detail_07_ext <- tbl_03_detail[c(tbl_03_pos_06[2], tbl_03_pos_06[2] + 2), 2:ncol(tbl_03_detail)]
+if(length(tbl_03_pos_06) > 0){
+  if(tbl_03_pos_06[1] > tbl_03_pos_06[2]){
+    tbl_03_detail_07_ext <- tbl_03_detail[c(tbl_03_pos_06[2], tbl_03_pos_06[2] + 2), 2:ncol(tbl_03_detail)]
+  } else {
+    tbl_03_detail_07_ext <- tbl_03_detail[tbl_03_pos_06[1]:(tbl_03_pos_06[1] + 1), 2:ncol(tbl_03_detail)]
+  }
+  
+  tbl_03_pos_07 <- grep(pattern = "^일$", tbl_03_detail_07_ext[2, ])
+  
+  df_tbl_03_detail_07 <- data.frame(detail   = ifelse(test = tbl_03_detail_07_ext[1, 2] == "-", 
+                                                      yes = NA,
+                                                      no = paste0(tbl_03_detail_07_ext[1, 2:ncol(tbl_03_detail_07_ext)], collapse = "")),
+                                    when     = ifelse(test = tbl_03_detail_07_ext[2, tbl_03_pos_07 - 2] == "-", 
+                                                      yes = NA,
+                                                      no = paste0(tbl_03_detail_07_ext[2, 1:(tbl_03_pos_07 - 2)], collapse = "")),
+                                    duration = ifelse(test = tbl_03_detail_07_ext[2, tbl_03_pos_07 - 1] == "-", 
+                                                      yes = NA, 
+                                                      no = paste0(tbl_03_detail_07_ext[2, (tbl_03_pos_07 - 1):tbl_03_pos_07], collapse = "")))
 } else {
-  tbl_03_detail_07_ext <- tbl_03_detail[tbl_03_pos_06[1]:(tbl_03_pos_06[1] + 1), 2:ncol(tbl_03_detail)]
+  df_tbl_03_detail_07 <- data.frame(detail = NA,
+                                    when = NA,
+                                    duration = NA)
 }
-
-tbl_03_pos_07 <- grep(pattern = "^일$", tbl_03_detail_07_ext[2, ])
-
-df_tbl_03_detail_07 <- data.frame(detail   = ifelse(test = tbl_03_detail_07_ext[1, 2] == "-", 
-                                                    yes = NA,
-                                                    no = paste0(tbl_03_detail_07_ext[1, 2:ncol(tbl_03_detail_07_ext)], collapse = "")),
-                                  when     = ifelse(test = tbl_03_detail_07_ext[2, tbl_03_pos_07 - 2] == "-", 
-                                                    yes = NA,
-                                                    no = paste0(tbl_03_detail_07_ext[2, 1:(tbl_03_pos_07 - 2)], collapse = "")),
-                                  duration = ifelse(test = tbl_03_detail_07_ext[2, tbl_03_pos_07 - 1] == "-", 
-                                                    yes = NA, 
-                                                    no = paste0(tbl_03_detail_07_ext[2, (tbl_03_pos_07 - 1):tbl_03_pos_07], collapse = "")))
 df_tbl_03_detail_07
 
 #### ___ ● 커뮤니케이션 ####
-tbl_04_com
-
-tbl_04_colname <- as.character(tbl_04_com[1, ])
-tbl_04_obs    <- as.numeric(tbl_04_com[grep(pattern = "[0-9]", tbl_04_com[, 1]), 1])
-tbl_04_date   <- tbl_04_com[grep(pattern = "^[0-9]{4}", tbl_04_com[, 2]), 2]
-tbl_04_people <- tbl_04_com[tbl_04_com[, 3] != "", 3][-1]
-tbl_04_type   <- tbl_04_com[tbl_04_com[, 4] != "", 4][-1]
-tbl_04_agenda <- tbl_04_com[, 5] # 일부러 제목 빼지 않음.
-
-if(tbl_04_obs == 1){
-  tbl_04_type <- paste(tbl_04_type, collapse = " ")
-}
-
-tbl_04_pos_01 <- grep(pattern = "^회사", tbl_04_people) # 보통 회사 또는 회사측 으로 시작함
-tbl_04_pos_02 <- c((tbl_04_pos_01 - 1)[-1], length(tbl_04_people))
-
-tbl_04_people_pasted <- c()
-if(tbl_04_pos_01 > 0){
-  for(pos in 1:length(tbl_04_pos_01)){
-    tbl_04_people_pasted[pos] <- paste(tbl_04_people[tbl_04_pos_01[pos]:tbl_04_pos_02[pos]], collapse = "/")
+if(is.na(tbl_04_com) == FALSE){
+  tbl_04_colname <- as.character(tbl_04_com[1, ])
+  tbl_04_obs    <- as.numeric(tbl_04_com[grep(pattern = "[0-9]", tbl_04_com[, 1]), 1])
+  tbl_04_date   <- tbl_04_com[grep(pattern = "^[0-9]{4}", tbl_04_com[, 2]), 2]
+  tbl_04_people <- tbl_04_com[tbl_04_com[, 3] != "", 3][-1]
+  tbl_04_type   <- tbl_04_com[tbl_04_com[, 4] != "", 4][-1]
+  tbl_04_agenda <- tbl_04_com[, 5] # 일부러 제목 빼지 않음.
+  
+  if(tbl_04_obs == 1){
+    tbl_04_type <- paste(tbl_04_type, collapse = " ")
   }
-} else {
-  # 그냥 이름만 있는 경우도 있음
-  # matrix로 처리
-  tbl_04_people_pasted <- matrix(tbl_04_people, nrow = length(tbl_04_obs), byrow = TRUE)  
-  tbl_04_people_pasted <- apply(tbl_04_people_pasted, MARGIN = 1, FUN = "paste", collapse = "/")
-}
-
-tbl_04_agenda_pasted <- c()
-if(tbl_04_pos_01 > 0){
-  for(pos in 1:length(tbl_04_pos_01)){
-    tbl_04_agenda_pasted[pos] <- paste(tbl_04_agenda[tbl_04_pos_01[pos]:tbl_04_pos_02[pos]], collapse = "/")
+  
+  tbl_04_pos_01 <- grep(pattern = "^회사", tbl_04_people) # 보통 회사 또는 회사측 으로 시작함
+  tbl_04_pos_02 <- c((tbl_04_pos_01 - 1)[-1], length(tbl_04_people))
+  
+  tbl_04_people_pasted <- c()
+  if(tbl_04_pos_01 > 0){
+    for(pos in 1:length(tbl_04_pos_01)){
+      tbl_04_people_pasted[pos] <- paste(tbl_04_people[tbl_04_pos_01[pos]:tbl_04_pos_02[pos]], collapse = "/")
+    }
+  } else {
+    # 그냥 이름만 있는 경우도 있음
+    # matrix로 처리
+    tbl_04_people_pasted <- matrix(tbl_04_people, nrow = length(tbl_04_obs), byrow = TRUE)  
+    tbl_04_people_pasted <- apply(tbl_04_people_pasted, MARGIN = 1, FUN = "paste", collapse = "/")
   }
-} else {
-  # 그냥 이름만 있는 경우도 있음
-  # matrix로 처리
-  tbl_04_people_pasted <- matrix(tbl_04_people, nrow = length(tbl_04_obs), byrow = TRUE)  
-  tbl_04_people_pasted <- apply(tbl_04_people_pasted, MARGIN = 1, FUN = "paste", collapse = "/")
-}
-
-tbl_04_gap <- c()
-tbl_04_gap[1] <- which(tbl_04_com[, 1] == 1) - 2 # 첫 번째.
-if(length(tbl_04_obs) >= 2){
-  for(n_gap in 2:length(tbl_04_obs)){
-    tbl_04_gap[n_gap] <- diff(which(tbl_04_com[, 1] %in% c(n_gap - 1, n_gap))) - tbl_04_gap[n_gap - 1] - 1  
+  
+  tbl_04_agenda_pasted <- c()
+  if(tbl_04_pos_01 > 0){
+    for(pos in 1:length(tbl_04_pos_01)){
+      tbl_04_agenda_pasted[pos] <- paste(tbl_04_agenda[tbl_04_pos_01[pos]:tbl_04_pos_02[pos]], collapse = "/")
+    }
+  } else {
+    # 그냥 이름만 있는 경우도 있음
+    # matrix로 처리
+    tbl_04_people_pasted <- matrix(tbl_04_people, nrow = length(tbl_04_obs), byrow = TRUE)  
+    tbl_04_people_pasted <- apply(tbl_04_people_pasted, MARGIN = 1, FUN = "paste", collapse = "/")
   }
+  
+  tbl_04_gap <- c()
+  tbl_04_gap[1] <- which(tbl_04_com[, 1] == 1) - 2 # 첫 번째.
+  if(length(tbl_04_obs) >= 2){
+    for(n_gap in 2:length(tbl_04_obs)){
+      tbl_04_gap[n_gap] <- diff(which(tbl_04_com[, 1] %in% c(n_gap - 1, n_gap))) - tbl_04_gap[n_gap - 1] - 1  
+    }
+  }
+  tbl_04_gap <- tbl_04_gap * 2 + 1
+  tbl_04_pos_03 <- c(2, cumsum(tbl_04_gap) + 1)
+  
+  tbl_04_agenda_pasted <- c()
+  for(n_pos in 1:length(tbl_04_obs)){
+    tbl_04_agenda_pasted[n_pos] <- paste(tbl_04_agenda[tbl_04_pos_03[n_pos]:tbl_04_pos_03[n_pos + 1]], collapse = "/")
+  }
+  tbl_04_agenda_pasted <- gsub(pattern = "\\/{2,}", replacement = "/", tbl_04_agenda_pasted)
+  tbl_04_agenda_pasted <- gsub(pattern = "^\\/|\\/$", replacement = "", tbl_04_agenda_pasted)
+  
+  df_tbl_04_com <- data.frame(obs  = tbl_04_obs,
+                              date = tbl_04_date,
+                              ppl  = tbl_04_people_pasted,
+                              type = tbl_04_type,
+                              agenda = tbl_04_agenda_pasted)
+  colnames(df_tbl_04_com) <- tbl_04_colname
+} else { 
+  df_tbl_04_com = NA
 }
-tbl_04_gap <- tbl_04_gap * 2 + 1
-tbl_04_pos_03 <- c(2, cumsum(tbl_04_gap) + 1)
-
-tbl_04_agenda_pasted <- c()
-for(n_pos in 1:length(tbl_04_obs)){
-  tbl_04_agenda_pasted[n_pos] <- paste(tbl_04_agenda[tbl_04_pos_03[n_pos]:tbl_04_pos_03[n_pos + 1]], collapse = "/")
-}
-tbl_04_agenda_pasted <- gsub(pattern = "\\/{2,}", replacement = "/", tbl_04_agenda_pasted)
-tbl_04_agenda_pasted <- gsub(pattern = "^\\/|\\/$", replacement = "", tbl_04_agenda_pasted)
-
-df_tbl_04_com <- data.frame(obs  = tbl_04_obs,
-                            date = tbl_04_date,
-                            ppl  = tbl_04_people_pasted,
-                            type = tbl_04_type,
-                            agenda = tbl_04_agenda_pasted)
-colnames(df_tbl_04_com) <- tbl_04_colname
 df_tbl_04_com
-
-#### 3. json 변환 ####
-pdf_list <- list(tbl_01 = tbl_01_audit_value,
-                tbl_02 = tbl_02_hour,
-                tbl_03 = list(df_tbl_03_detail_01,
-                              df_tbl_03_detail_02,
-                              df_tbl_03_detail_03,
-                              df_tbl_03_detail_04,
-                              df_tbl_03_detail_05,
-                              df_tbl_03_detail_06,
-                              df_tbl_03_detail_07),
-                tbl_04 = df_tbl_04_com)
-pdf_list
-
-
-
-# json 변환까지 마친 이후에는 table 객체를 초기화 해야 한다. 그래야 에러가 났는지 안났는지 알지.
