@@ -1,4 +1,4 @@
-# setwd()
+source("~/projects/wrangling_accounting_related_data/crawling/r/dart/rc01_environment.R", encoding = "UTF-8")
 
 library(rvest)
 library(stringi)
@@ -21,16 +21,15 @@ df_listt = data.frame(path = listt,
 df_listt = df_listt[df_listt$year >= 2015, ]
 head(df_listt)
 
-# options(warn = 2) # 경고가 발생하면 멈추게 함
-# options(warn = 1) # 기본옵션
-for(n_file in 53700:nrow(df_listt)){ # nrow(df_listt)
-  # n_file = 25000 # <-- 마지막에서 에러남
+start_xml <- 1
+end_xml <- nrow(df_listt)
+
+for(n_file in start_xml:end_xml){
   print(n_file)
   xml_doc <- tryCatch(expr = {
     read_html(df_listt[n_file, "path"], encoding = "CP949")
   }, error = function(x){
     return(read_html(df_listt[n_file, "path"], encoding = "UTF-8"))
-    df_listt[n_file, "encoding"] = "UTF-8"
   })
   
   xml_doc %>%
