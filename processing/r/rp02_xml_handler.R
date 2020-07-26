@@ -1,36 +1,37 @@
-# setwd()
+source("~/projects/wrangling_accounting_related_data/crawling/r/dart/rc01_environment.R", encoding = "UTF-8")
 
-library(rvest)
-library(stringi)
-library(jsonlite)
+# # A001
+# list_doc = list.files(path = biz_report_list_csv_Dir,
+#                       full.names = TRUE)
+# 
+# list_xml = list.files(path = biz_report_doc,
+#                       recursive = TRUE,
+#                       full.names = TRUE)
 
-listt2 = list.files(path = "doc_list_F001_codes/",
-                    full.names = TRUE)
-head(listt2)
+# F001
+list_doc = list.files(path = audit_report_list_csv_Dir,
+                      full.names = TRUE)
 
+list_xml = list.files(path = audit_report_doc,
+                      recursive = TRUE,
+                      full.names = TRUE)
 
-listt = list.files(path = "doc_list_F001_xml_download/",
-                   # pattern = "xml$",
-                   recursive = TRUE,
-                   full.names = TRUE)
-head(listt)
+value_filter_year_min_xml <- 2014
+value_filter_year_max_xml <- as.numeric(substr(Sys.Date(), start = 1, stop = 4))
 
-df_listt = data.frame(path = listt,
-                      year = stri_extract(str = listt, regex = "(?<=/)(199[0-9]|20[0-2][0-9])"),
-                      encoding = "CP949")
-df_listt = df_listt[df_listt$year >= 2015, ]
-head(df_listt)
+df_list_xml = data.frame(path = list_xml,
+                         year = stri_extract(str = list_xml, regex = "(?<=[0-9]/)(19[8-9][0-9]|20[0-2][0-9])"))
+df_list_xml = df_list_xml[(df_list_xml$year <= value_filter_year_max_xml) & (df_list_xml$year >= value_filter_year_min_xml), ]
 
-# options(warn = 2) # 경고가 발생하면 멈추게 함
-# options(warn = 1) # 기본옵션
-for(n_file in 53700:nrow(df_listt)){ # nrow(df_listt)
-  # n_file = 25000 # <-- 마지막에서 에러남
+start_xml <- 1
+end_xml <- nrow(df_list_xml)
+
+for(n_file in start_xml:end_xml){
   print(n_file)
   xml_doc <- tryCatch(expr = {
-    read_html(df_listt[n_file, "path"], encoding = "CP949")
+    read_html(df_list_xml[n_file, "path"], encoding = "CP949")
   }, error = function(x){
-    return(read_html(df_listt[n_file, "path"], encoding = "UTF-8"))
-    df_listt[n_file, "encoding"] = "UTF-8"
+    return(read_html(df_list_xml[n_file, "path"], encoding = "UTF-8"))
   })
   
   xml_doc %>%
@@ -86,7 +87,6 @@ for(n_file in 53700:nrow(df_listt)){ # nrow(df_listt)
     gsub(pattern = "[^0-9]", replacement = "") %>% 
     ifelse(test = . == "", yes = NA, no = .) %>%
     as.numeric() -> table_sub_data
-  
   
   df_table_hour = data.frame(var = table_sub_names,
                              value = table_sub_data)
@@ -184,11 +184,10 @@ for(n_file in 53700:nrow(df_listt)){ # nrow(df_listt)
   }
   
   
-  df_corp_info = read.csv(grep(pattern = corp_code, x = listt2, value = TRUE))
+  df_corp_info = read.csv(grep(pattern = corp_code, x = list_doc, value = TRUE))
   df_corp_info[, "rcept_no"] = as.character(df_corp_info$rcept_no)
-  # head(df_corp_info)
   
-  recept_no = stri_extract(str = df_listt[n_file, "path"], regex = "(?<=\\/)[0-9]{14}")
+  recept_no = stri_extract(str = df_list_xml[n_file, "path"], regex = "(?<=\\/)[0-9]{12,15}")
   doc_loc = grep(pattern = recept_no, df_corp_info$rcept_no)
   
   meta_report_audit <- list("fiscal_year" = substr(audit_date_end, start = 1, stop = 4), 
@@ -204,14 +203,10 @@ for(n_file in 53700:nrow(df_listt)){ # nrow(df_listt)
                             "rm" = df_corp_info[1, "rm"],
                             "turn" = "51")
   
-  # df_table_hour_this_yr = df_table_hour[grep(pattern = "TH$", x = df_table_hour$var), ]
-  
-  
   # 내부회계관리제도 감사
   xml_doc %>% 
     html_nodes(xpath = "//*/section-1/image/..") %>% 
     html_children() -> xml_doc_internal
-  
   
   xml_doc_internal[1] %>% 
     html_text() -> xml_doc_report_title
@@ -312,10 +307,8 @@ for(n_file in 53700:nrow(df_listt)){ # nrow(df_listt)
   dir_corp = paste0("corp_no_", corp_code)
   
   # write - json
-  dir_path_base_json = "doc_list_F001_xml_download_to_json/"
-  dir.create(path = paste0(dir_path_base_json, dir_corp), showWarnings = FALSE)
-  
-  dir_path_json = paste0("./", dir_path_base_json, dir_corp, "/")
+  dir_path_json = paste0(audit_report_parsed_json_Dir, dir_corp)
+  dir.create(path = dir_path_json, showWarnings = FALSE, recursive = TRUE)
   
   # json writing - external
   file_name_external = paste(corp_code,  
@@ -324,7 +317,7 @@ for(n_file in 53700:nrow(df_listt)){ # nrow(df_listt)
                              doc_code,
                              "external_audit_contents.json", sep = "_")
   write(external_audit_contents, 
-        paste0(dir_path_json, file_name_external))
+        paste(dir_path_json, file_name_external, sep = "/"))
   
   # json writing - internal
   file_name_internal = paste(corp_code,  
@@ -334,14 +327,11 @@ for(n_file in 53700:nrow(df_listt)){ # nrow(df_listt)
                              "internal_accounting_contents.json", sep = "_")
   
   write(internal_accounting_contents,
-        paste0(dir_path_json, file_name_internal)) 
+        paste(dir_path_json, file_name_internal, sep = "/")) 
   
   # write - rds
-  dir_path_base_rds = "doc_list_F001_xml_download_to_rds/"
-  dir_corp = paste0("corp_no_", corp_code)
-  dir.create(path = paste0(dir_path_base_rds, dir_corp), showWarnings = FALSE)
-  
-  dir_path_rds = paste0("./", dir_path_base_rds, dir_corp, "/")
+  dir_path_rds = paste0(audit_report_parsed_rds_Dir, dir_corp)
+  dir.create(path = dir_path_rds, showWarnings = FALSE, recursive = TRUE)
   
   file_name_rds = paste(corp_code,  
                         substr(audit_date_end, start = 1, stop = 4),
@@ -350,5 +340,5 @@ for(n_file in 53700:nrow(df_listt)){ # nrow(df_listt)
                         "contents_both.rds", sep = "_")
   saveRDS(list(internal = internal_accounting_contents,
                external = external_audit_contents),
-          paste0(dir_path_rds, file_name_rds))
+          paste(dir_path_rds, file_name_rds, sep = "/"))
 }
