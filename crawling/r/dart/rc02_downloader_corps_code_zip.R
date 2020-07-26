@@ -5,7 +5,7 @@ setwd(file.path(mainDir, corps_code_zip_Dir))
 
 corps_code_raw <- paste0("corps_code_", base_date, ".zip")
 
-corps_code_request_url <- paste0("https://opendart.fss.or.kr/api/corpCode.xml?&crtfc_key=", "680d964f06e9a576942d805ad2ba2a38d7e5e378")
+corps_code_request_url <- paste0("https://opendart.fss.or.kr/api/corpCode.xml?&crtfc_key=", key_dart)
 
 # Comments: When use download.file() function on Windows, should be careful as below:
 # On Windows, if mode is not supplied (missing()) and url ends in one of .gz, .bz2, .xz, .tgz, .zip, .rda, .rds or 
