@@ -30,21 +30,25 @@ ifelse(!dir.exists(file.path(mainDir, corps_code_unzip_Dir)), dir.create(file.pa
 ifelse(!dir.exists(file.path(mainDir, corps_code_parsed_csv_Dir)), dir.create(file.path(mainDir, corps_code_parsed_csv_Dir)), FALSE)
 
 # A001
-audit_report_list_xml_Dir <- paste0("results/audit_report/xml/", base_date, "/")
-audit_report_list_csv_Dir <- paste0("results/audit_report/csv/", base_date, "/")
-audit_report_zip <- paste0("results/audit_report/zip/", base_date, "/")
-audit_report_pdf <- paste0("results/audit_report/pdf/", base_date, "/")
-ifelse(!dir.exists(file.path(mainDir, audit_report_list_xml_Dir)), dir.create(file.path(mainDir, audit_report_list_xml_Dir)), FALSE)
-ifelse(!dir.exists(file.path(mainDir, audit_report_list_csv_Dir)), dir.create(file.path(mainDir, audit_report_list_csv_Dir)), FALSE)
-ifelse(!dir.exists(file.path(mainDir, audit_report_zip)), dir.create(file.path(mainDir, audit_report_zip)), FALSE)
-ifelse(!dir.exists(file.path(mainDir, audit_report_pdf)), dir.create(file.path(mainDir, audit_report_pdf)), FALSE)
-
-# F001
 biz_report_list_xml_Dir <- paste0("results/biz_report/xml/", base_date, "/")
 biz_report_list_csv_Dir <- paste0("results/biz_report/csv/", base_date, "/")
 biz_report_zip <- paste0("results/biz_report/zip/", base_date, "/")
 biz_report_pdf <- paste0("results/biz_report/pdf/", base_date, "/")
+biz_report_doc <- paste0("results/biz_report/doc/", base_date, "/")
 ifelse(!dir.exists(file.path(mainDir, biz_report_list_xml_Dir)), dir.create(file.path(mainDir, biz_report_list_xml_Dir)), FALSE)
 ifelse(!dir.exists(file.path(mainDir, biz_report_list_csv_Dir)), dir.create(file.path(mainDir, biz_report_list_csv_Dir)), FALSE)
 ifelse(!dir.exists(file.path(mainDir, biz_report_zip)), dir.create(file.path(mainDir, biz_report_zip)), FALSE)
 ifelse(!dir.exists(file.path(mainDir, biz_report_pdf)), dir.create(file.path(mainDir, biz_report_pdf)), FALSE)
+ifelse(!dir.exists(file.path(mainDir, biz_report_doc)), dir.create(file.path(mainDir, biz_report_doc)), FALSE)
+
+# F001
+audit_report_list_xml_Dir <- paste0("results/audit_report/xml/", base_date, "/")
+audit_report_list_csv_Dir <- paste0("results/audit_report/csv/", base_date, "/")
+audit_report_zip <- paste0("results/audit_report/zip/", base_date, "/")
+audit_report_pdf <- paste0("results/audit_report/pdf/", base_date, "/")
+audit_report_doc <- paste0("results/audit_report/doc/", base_date, "/")
+ifelse(!dir.exists(file.path(mainDir, audit_report_list_xml_Dir)), dir.create(file.path(mainDir, audit_report_list_xml_Dir)), FALSE)
+ifelse(!dir.exists(file.path(mainDir, audit_report_list_csv_Dir)), dir.create(file.path(mainDir, audit_report_list_csv_Dir)), FALSE)
+ifelse(!dir.exists(file.path(mainDir, audit_report_zip)), dir.create(file.path(mainDir, audit_report_zip)), FALSE)
+ifelse(!dir.exists(file.path(mainDir, audit_report_pdf)), dir.create(file.path(mainDir, audit_report_pdf)), FALSE)
+ifelse(!dir.exists(file.path(mainDir, audit_report_doc)), dir.create(file.path(mainDir, audit_report_doc)), FALSE)
