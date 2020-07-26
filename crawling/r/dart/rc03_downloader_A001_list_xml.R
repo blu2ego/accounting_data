@@ -18,7 +18,7 @@ for(i in start_a001:nrow(corps_code_a001)){
   corp_name_a001 <- corps_code_a001[i, "corp_name"]
   
   request_url_a001 <- paste0("https://opendart.fss.or.kr/api/list.xml?",
-                             "&crtfc_key=", "680d964f06e9a576942d805ad2ba2a38d7e5e378",
+                             "&crtfc_key=", key_dart,
                              "&corp_code=", corp_code_a001,
                              "&bgn_de=", date_begin_a001,
                              "&end_de=", date_end_a001,
