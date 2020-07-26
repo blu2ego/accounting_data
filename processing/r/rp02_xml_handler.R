@@ -1,4 +1,4 @@
-source("~/projects/wrangling_accounting_related_data/crawling/r/dart/rc01_environment.R", encoding = "UTF-8")
+source("~/projects/wrangling_accounting_related_data/processing/r/dart/rp01_environment.R", encoding = "UTF-8")
 
 # # A001
 # list_doc = list.files(path = biz_report_list_csv_Dir,
