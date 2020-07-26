@@ -58,7 +58,7 @@ doc_type_detail <- "A001"
 
 start <- 1
 
-for(n in start:39999){
+for(n in start:nrow(code_list)){
   print(n)
   corp_code <- sprintf(fmt = "%08d", code_list[n, "corp_code"])
   corp_name <- code_list[n, "corp_name"]
@@ -89,8 +89,9 @@ last_reprt_at <- "Y"
 doc_type <- "F"
 doc_type_detail <- "F001"
 
+start <- 1
 
-for(n in 1:39999){
+for(n in start:nrow(code_list)){
   print(n)
   corp_code <- sprintf(fmt = "%08d", code_list[n, "corp_code"])
   corp_name <- code_list[n, "corp_name"]
@@ -120,7 +121,7 @@ listt <- list.files(path = "doc_list_A001_codes/",
 url_base <- "http://dart.fss.or.kr/dsaf001/main.do?rcpNo="
 url_base_pdf <- "http://dart.fss.or.kr/pdf/download/pdf.do?"
 
-for(n_file in 1:10000){
+for(n_file in 1:length(listt)){
   df_code <- read.csv(listt[n_file])
   df_code[, "year"] <- as.numeric(stri_extract(str = df_code$report_nm, regex = "[0-9]{4}"))
   df_code <- df_code[df_code$year >= 2014, ]
@@ -206,7 +207,7 @@ listt <- list.files(path = "doc_list_F001_codes/",
 url_base <- "http://dart.fss.or.kr/dsaf001/main.do?rcpNo="
 url_base_pdf <- "http://dart.fss.or.kr/pdf/download/pdf.do?"
 
-for(n_file in 35202:40000){
+for(n_file in 1:length(listt)){
   df_code <- read.csv(listt[n_file])
   df_code[, "year"] <- as.numeric(stri_extract(str = df_code$report_nm, regex = "[0-9]{4}"))
   df_code <- df_code[df_code$year >= 2014, ]
@@ -243,7 +244,7 @@ source("00_environment.R", encoding = "UTF-8")
 listt <- list.files(path = "doc_list_F001_codes/",
                     full.names = TRUE)
 
-for(n_file in 1:10000){
+for(n_file in 1:length(listt)){
   df_code <- read.csv(listt[n_file])
   df_code[, "year"] <- as.numeric(stri_extract(str = df_code$report_nm, regex = "[0-9]{4}"))
   print(n_file)
