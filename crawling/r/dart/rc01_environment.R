@@ -51,4 +51,8 @@ ifelse(!dir.exists(file.path(mainDir, audit_report_list_xml_Dir)), dir.create(fi
 ifelse(!dir.exists(file.path(mainDir, audit_report_list_csv_Dir)), dir.create(file.path(mainDir, audit_report_list_csv_Dir)), FALSE)
 ifelse(!dir.exists(file.path(mainDir, audit_report_zip)), dir.create(file.path(mainDir, audit_report_zip)), FALSE)
 ifelse(!dir.exists(file.path(mainDir, audit_report_pdf)), dir.create(file.path(mainDir, audit_report_pdf)), FALSE)
+<<<<<<< HEAD
 ifelse(!dir.exists(file.path(mainDir, audit_report_doc)), dir.create(file.path(mainDir, audit_report_doc)), FALSE)
+=======
+ifelse(!dir.exists(file.path(mainDir, audit_report_doc)), dir.create(file.path(mainDir, audit_report_doc)), FALSE)
+>>>>>>> cd49bcdecccd6d8c078cc382683729937aa586a5
