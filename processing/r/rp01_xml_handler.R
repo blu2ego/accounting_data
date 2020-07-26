@@ -1,3 +1,5 @@
+# setwd()
+
 library(rvest)
 library(stringi)
 library(jsonlite)
@@ -21,8 +23,8 @@ head(df_listt)
 
 # options(warn = 2) # 경고가 발생하면 멈추게 함
 # options(warn = 1) # 기본옵션
-for(n_file in 1:nrow(df_listt)){ # nrow(df_listt)
-  # n_file = 9
+for(n_file in 53700:nrow(df_listt)){ # nrow(df_listt)
+  # n_file = 25000 # <-- 마지막에서 에러남
   print(n_file)
   xml_doc <- tryCatch(expr = {
     read_html(df_listt[n_file, "path"], encoding = "CP949")
@@ -140,7 +142,7 @@ for(n_file in 1:nrow(df_listt)){ # nrow(df_listt)
     table_sub_com_name = table_name
   } else {
     df_table_com = data.frame()
-    table_sub_com_name = ""
+    table_sub_com_name = NA
   }
   
   # audit opinion
@@ -178,14 +180,15 @@ for(n_file in 1:nrow(df_listt)){ # nrow(df_listt)
     
     list_doc_report = xml_doc_report_text
   } else {
-    list_doc_report = ""
+    list_doc_report = NA
   }
   
   
   df_corp_info = read.csv(grep(pattern = corp_code, x = listt2, value = TRUE))
+  df_corp_info[, "rcept_no"] = as.character(df_corp_info$rcept_no)
   # head(df_corp_info)
   
-  recept_no = stri_extract(str = listt[n_file], regex = "(?<=\\/)[0-9]{14}")
+  recept_no = stri_extract(str = df_listt[n_file, "path"], regex = "(?<=\\/)[0-9]{14}")
   doc_loc = grep(pattern = recept_no, df_corp_info$rcept_no)
   
   meta_report_audit <- list("fiscal_year" = substr(audit_date_end, start = 1, stop = 4), 
@@ -198,7 +201,7 @@ for(n_file in 1:nrow(df_listt)){ # nrow(df_listt)
                             "rcept_no" = recept_no, 
                             "flr_name" = df_corp_info[1, "flr_nm"], 
                             "rcept_dt" = df_corp_info[doc_loc, "rcept_dt"], 
-                            "rm" = df_corp_info[doc_loc, "rm"],
+                            "rm" = df_corp_info[1, "rm"],
                             "turn" = "51")
   
   # df_table_hour_this_yr = df_table_hour[grep(pattern = "TH$", x = df_table_hour$var), ]
@@ -230,29 +233,54 @@ for(n_file in 1:nrow(df_listt)){ # nrow(df_listt)
   list_doc_internal = xml_doc_internal_text
   
   
-  
-  auditors <- list(quality_ctrl = list("품질관리검토자" = df_table_hour[df_table_hour$var == "NUM_QLT_TH", "value"]), 
-                   cpa = list("감사업무 담당 회계사" = list("담당이사" = df_table_hour[df_table_hour$var == "NUM_ACT_TH", "value"], 
-                                                   "등록 공인회계사" = df_table_hour[df_table_hour$var == "NUM_ACR_TH", "value"], 
-                                                   "수습 공인회계사" = df_table_hour[df_table_hour$var == "NUM_ACP_TH", "value"])), 
-                   prf = list("전산감사 등 전문가" = df_table_hour[df_table_hour$var == "NUM_EXP_TH", "value"], 
-                              "수주산업 등 전문가" = df_table_hour[df_table_hour$var == "NUM_COT_TH", "value"]))
-  
-  # 외부감사 실시 내용 중 투입 시간 정보(분/반기)
-  auditors_time_periodic <- list(quality_ctrl_time_periodic = list("품질관리검토자" = df_table_hour[df_table_hour$var == "TMA_QLT_TH", "value"]), 
-                                 cpa_time_periodic = list("감사업무 담당 회계사" = list("담당이사" = df_table_hour[df_table_hour$var == "TMA_ACT_TH", "value"],
-                                                                               "등록 공인회계사" = df_table_hour[df_table_hour$var == "TMA_ACR_TH", "value"], 
-                                                                               "수습 공인회계사" = df_table_hour[df_table_hour$var == "TMA_ACP_TH", "value"])),
-                                 prf_time_periodic = list("전산감사 등 전문가" = df_table_hour[df_table_hour$var == "TMA_EXP_TH", "value"], 
-                                                          "수주산업 등 전문가" = df_table_hour[df_table_hour$var == "TMA_COT_TH", "value"]))
-  
-  # 외부감사 실시 내용 중 투입 시간 정보(기말)
-  auditors_time_yearend <- list(quality_ctrl_time_yearend = list("품질관리검토자" = df_table_hour[df_table_hour$var == "TMY_QLT_TH", "value"]),
-                                cpa_time_yearend = list("감사업무 담당 회계사" = list("담당이사" = df_table_hour[df_table_hour$var == "TMY_ACT_TH", "value"], 
-                                                                             "등록 공인회계사" = df_table_hour[df_table_hour$var == "TMY_ACR_TH", "value"], 
-                                                                             "수습 공인회계사" = df_table_hour[df_table_hour$var == "TMY_ACP_TH", "value"])),
-                                prf_time_yearend = list("전산감사 등 전문가" = df_table_hour[df_table_hour$var == "TMY_EXP_TH", "value"], 
-                                                        "수주산업 등 전문가" = df_table_hour[df_table_hour$var == "TMY_COT_TH", "value"]))
+  if(sum(df_table_hour$var == "NUM_QLT_TH") == 1){
+    auditors <- list(quality_ctrl = list("품질관리검토자" = df_table_hour[df_table_hour$var == "NUM_QLT_TH", "value"]), 
+                     cpa = list("감사업무 담당 회계사" = list("담당이사" = df_table_hour[df_table_hour$var == "NUM_ACT_TH", "value"], 
+                                                     "등록 공인회계사" = df_table_hour[df_table_hour$var == "NUM_ACR_TH", "value"], 
+                                                     "수습 공인회계사" = df_table_hour[df_table_hour$var == "NUM_ACP_TH", "value"])), 
+                     prf = list("전산감사 등 전문가" = df_table_hour[df_table_hour$var == "NUM_EXP_TH", "value"], 
+                                "수주산업 등 전문가" = df_table_hour[df_table_hour$var == "NUM_COT_TH", "value"]))
+    
+    # 외부감사 실시 내용 중 투입 시간 정보(분/반기)
+    auditors_time_periodic <- list(quality_ctrl_time_periodic = list("품질관리검토자" = df_table_hour[df_table_hour$var == "TMA_QLT_TH", "value"]), 
+                                   cpa_time_periodic = list("감사업무 담당 회계사" = list("담당이사" = df_table_hour[df_table_hour$var == "TMA_ACT_TH", "value"],
+                                                                                 "등록 공인회계사" = df_table_hour[df_table_hour$var == "TMA_ACR_TH", "value"], 
+                                                                                 "수습 공인회계사" = df_table_hour[df_table_hour$var == "TMA_ACP_TH", "value"])),
+                                   prf_time_periodic = list("전산감사 등 전문가" = df_table_hour[df_table_hour$var == "TMA_EXP_TH", "value"], 
+                                                            "수주산업 등 전문가" = df_table_hour[df_table_hour$var == "TMA_COT_TH", "value"]))
+    
+    # 외부감사 실시 내용 중 투입 시간 정보(기말)
+    auditors_time_yearend <- list(quality_ctrl_time_yearend = list("품질관리검토자" = df_table_hour[df_table_hour$var == "TMY_QLT_TH", "value"]),
+                                  cpa_time_yearend = list("감사업무 담당 회계사" = list("담당이사" = df_table_hour[df_table_hour$var == "TMY_ACT_TH", "value"], 
+                                                                               "등록 공인회계사" = df_table_hour[df_table_hour$var == "TMY_ACR_TH", "value"], 
+                                                                               "수습 공인회계사" = df_table_hour[df_table_hour$var == "TMY_ACP_TH", "value"])),
+                                  prf_time_yearend = list("전산감사 등 전문가" = df_table_hour[df_table_hour$var == "TMY_EXP_TH", "value"], 
+                                                          "수주산업 등 전문가" = df_table_hour[df_table_hour$var == "TMY_COT_TH", "value"]))
+    
+  } else {
+    auditors <- list(quality_ctrl = list("품질관리검토자" = df_table_hour[df_table_hour$var == "NUM_QLT", "value"]), 
+                     cpa = list("감사업무 담당 회계사" = list("담당이사" = df_table_hour[df_table_hour$var == "NUM_ACT", "value"], 
+                                                     "등록 공인회계사" = df_table_hour[df_table_hour$var == "NUM_ACR", "value"], 
+                                                     "수습 공인회계사" = df_table_hour[df_table_hour$var == "NUM_ACP", "value"])), 
+                     prf = list("전산감사 등 전문가" = df_table_hour[df_table_hour$var == "NUM_EXP", "value"], 
+                                "합계" = df_table_hour[df_table_hour$var == "NUM_TOT", "value"]))
+    
+    # 외부감사 실시 내용 중 투입 시간 정보(분/반기)
+    auditors_time_periodic <- list(quality_ctrl_time_periodic = list("품질관리검토자" = df_table_hour[df_table_hour$var == "TMA_QLT", "value"]), 
+                                   cpa_time_periodic = list("감사업무 담당 회계사" = list("담당이사" = df_table_hour[df_table_hour$var == "TMA_ACT", "value"],
+                                                                                 "등록 공인회계사" = df_table_hour[df_table_hour$var == "TMA_ACR", "value"], 
+                                                                                 "수습 공인회계사" = df_table_hour[df_table_hour$var == "TMA_ACP", "value"])),
+                                   prf_time_periodic = list("전산감사 등 전문가" = df_table_hour[df_table_hour$var == "TMA_EXP", "value"], 
+                                                            "합계" = df_table_hour[df_table_hour$var == "TMA_TOT", "value"]))
+    
+    # 외부감사 실시 내용 중 투입 시간 정보(기말)
+    auditors_time_yearend <- list(quality_ctrl_time_yearend = list("품질관리검토자" = df_table_hour[df_table_hour$var == "TMY_QLT", "value"]),
+                                  cpa_time_yearend = list("감사업무 담당 회계사" = list("담당이사" = df_table_hour[df_table_hour$var == "TMY_ACT", "value"], 
+                                                                               "등록 공인회계사" = df_table_hour[df_table_hour$var == "TMY_ACR", "value"], 
+                                                                               "수습 공인회계사" = df_table_hour[df_table_hour$var == "TMY_ACP", "value"])),
+                                  prf_time_yearend = list("전산감사 등 전문가" = df_table_hour[df_table_hour$var == "TMY_EXP", "value"], 
+                                                          "합계" = df_table_hour[df_table_hour$var == "TMY_TOT", "value"]))
+  }
   
   # 외부 감사 실시 내용(집합)
   external_audit_contents <- list("보고서" = meta_report_audit, 
