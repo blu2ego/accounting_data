@@ -3,9 +3,12 @@
 # importing dart's key
 key_dart <- readLines("~/projects/wrangling_accounting_related_data/crawling/sources/key_dart.txt", warn = FALSE)
 
-# creating xml_child2df function to import and process xml
+# loading required libraries
 library(rvest)
 library(stringi)
+library(tidyverse)
+
+# creating xml_child2df function to import and process xml
 xml_child2df <- function(x){
   x_child <- html_children(x)
   x_df <- as.data.frame(matrix(html_text(x_child), 
