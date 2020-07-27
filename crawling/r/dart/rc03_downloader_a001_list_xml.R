@@ -1,10 +1,9 @@
 source("~/projects/wrangling_accounting_related_data/crawling/r/dart/rc01_environment.R", encoding = "UTF-8")
 
-# initialization
-setwd("./")
+# set working directory
+setwd(file.path(mainDir, corps_code_parsed_csv_Dir))
 
-corps_code_a001 <- read.csv(paste0(mainDir, corps_code_parsed_csv_Dir, "corps_code_parsed_", base_date, ".csv"), 
-                            header = T)
+corps_code_a001 <- read.csv(paste0("corps_code_parsed_", base_date, ".csv"), header = T)
 
 date_begin_a001 <- "19800101"
 date_end_a001 <- gsub(pattern = "[^0-9]", replacement = "", x = base_date)
