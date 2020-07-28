@@ -19,7 +19,7 @@ end_f001 <- length(lists_f001)
 time_delay_f001 <- 1
 
 for(n_file in start_f001:end_f001){
-  list_f001 <- read.csv(lists_f001[n_file], header = T, fileEncoding = "EUC-KR")
+  list_f001 <- read.csv(lists_f001[n_file], header = T)
   list_f001[, "year"] <- as.numeric(stri_extract(str = list_f001$report_nm, regex = "[0-9]{4}"))
   list_f001 <- list_f001[(list_f001$year <= value_filter_year_max_f001) & (list_f001$year >= value_filter_year_min_f001), ]
   print(n_file)
