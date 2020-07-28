@@ -19,9 +19,9 @@ list_xml = list.files(path = audit_report_doc,
 value_filter_year_min_xml <- 2014
 value_filter_year_max_xml <- as.numeric(substr(Sys.Date(), start = 1, stop = 4))
 
-df_list_xml = data.frame(path = list_xml,
+df_list_xml <- data.frame(path = list_xml,
                          year = stri_extract(str = list_xml, regex = "(?<=[0-9]/)(19[8-9][0-9]|20[0-2][0-9])"))
-df_list_xml = df_list_xml[(df_list_xml$year <= value_filter_year_max_xml) & (df_list_xml$year >= value_filter_year_min_xml), ]
+df_list_xml <- df_list_xml[(df_list_xml$year <= value_filter_year_max_xml) & (df_list_xml$year >= value_filter_year_min_xml), ]
 
 start_xml <- 1
 end_xml <- nrow(df_list_xml)

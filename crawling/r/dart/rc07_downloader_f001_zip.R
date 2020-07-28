@@ -3,6 +3,7 @@ source("~/projects/wrangling_accounting_related_data/crawling/r/dart/rc01_enviro
 # set working directory
 setwd(file.path(mainDir, audit_report_list_csv_Dir))
 
+# importing list of F001 files
 lists_f001 <- list.files()
 
 # download F001 files
@@ -18,6 +19,8 @@ for(r in start_f001:end_f001){
   
   path_dir <- paste0(mainDir, audit_report_zip, "corp_code_", corp_code)
   dir.create(path = path_dir, showWarnings = FALSE)
+  
+  print(r)
   
   for(s in 1:nrow(list_f001)){
     recept_no <- as.character(list_f001[s, "rcept_no"])
