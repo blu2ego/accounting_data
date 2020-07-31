@@ -2,7 +2,7 @@
 import pandas as pd
 
 # base date
-base_date = time.strftime('%Y%m%d', time.localtime(time.time()))
+base_date = time.strftime('%Y-%m-%d', time.localtime(time.time()))
 
 # A001
 biz_report_doc             = "results/biz_report/doc/" + base_date + "/"
