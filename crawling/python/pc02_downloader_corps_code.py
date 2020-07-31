@@ -3,6 +3,7 @@ exec(open("C:/Users/Encaion/Documents/41_outsource/crawling_DART_package/crawlin
 # set working directory
 os.chdir(mainDir + corps_code_zip_Dir)
 
+# loading required libraries
 import urllib.request
 
 corps_code_raw = "corps_code_" + base_date + ".zip"
