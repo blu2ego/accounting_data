@@ -15,7 +15,7 @@ corps_code = BeautifulSoup(corps_code)
 corps_code_list = corps_code.find_all("list")
 
 df_corps_code = pd.DataFrame()
-for corps_code_element in fun_code_list:
+for corps_code_element in corps_code_list:
   df_corps_code_sub = pd.DataFrame([corps_code_element.text.split("\n")[1:-1]])  
   df_corps_code = pd.concat([df_corps_code, df_corps_code_sub])
   
