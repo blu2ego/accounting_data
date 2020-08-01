@@ -1,7 +1,9 @@
-source("~/projects/wrangling_accounting_related_data/crawling/r/dart/rc01_environment.R", encoding = "UTF-8")
+############################################################
+## /ward/crawling/dart/r/cdr03_downloader_a001_list_xml.R ##
+############################################################
 
 # set working directory
-setwd(file.path(mainDir, corps_code_parsed_csv_Dir))
+setwd(file.path(main_dir, corps_code_parsed_csv_dir))
 
 corps_code_a001 <- read.csv(paste0("corps_code_parsed_", base_date, ".csv"), header = T)
 
@@ -16,10 +18,10 @@ start_a001 <- 1
 end_a001 <- nrow(corps_code_a001)
 time_delay_a001 <- 5
 
-for(i in start_a001:end_a001){
-  print(i)
-  corp_code_a001 <- sprintf(fmt = "%08d", corps_code_a001[i, "corp_code"])
-  corp_name_a001 <- corps_code_a001[i, "corp_name"]
+for(n_corps in start_a001:end_a001){
+  print(n_corps)
+  corp_code_a001 <- sprintf(fmt = "%08d", corps_code_a001[n_corps, "corp_code"])
+  corp_name_a001 <- corps_code_a001[n_corps, "corp_name"]
   
   request_url_a001 <- paste0("https://opendart.fss.or.kr/api/list.xml?",
                              "&crtfc_key=", key_dart,
@@ -33,7 +35,7 @@ for(i in start_a001:end_a001){
   
   report_a001 <- read_html(request_url_a001, encoding = "UTF-8")
   write_xml(report_a001, 
-            paste0(mainDir, biz_report_list_xml_Dir, "a001_", corp_code_a001, ".xml"), 
+            paste0(main_dir, biz_report_list_xml_dir, "a001_", corp_code_a001, ".xml"), 
             encoding = "UTF-8")
   
   Sys.sleep(time_delay_a001 + runif(1) * 2)
