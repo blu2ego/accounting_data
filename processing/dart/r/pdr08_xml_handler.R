@@ -1,26 +1,28 @@
-source("~/projects/wrangling_accounting_related_data/processing/r/dart/rp01_environment.R", encoding = "UTF-8")
+#################################################
+## /ward/processing/dart/r/pdr08_xml_handler.R ##
+#################################################
 
-# # A001
-# list_doc = list.files(path = biz_report_list_csv_Dir,
-#                       full.names = TRUE)
-# 
-# list_xml = list.files(path = biz_report_doc,
-#                       recursive = TRUE,
-#                       full.names = TRUE)
-
-# F001
-list_doc = list.files(path = audit_report_list_csv_Dir,
+# A001
+list_doc = list.files(path = biz_report_list_csv_dir,
                       full.names = TRUE)
 
-list_xml = list.files(path = audit_report_doc,
+list_xml = list.files(path = biz_report_doc, # 경로명 수정 필요
                       recursive = TRUE,
                       full.names = TRUE)
 
+# F001
+list_doc <- list.files(path = paste0(main_dir, audit_report_list_csv_dir), 
+                       full.names = TRUE)
+
+list_xml <- list.files(path = paste0(main_dir, audit_report_xml_from_aud),
+                       full.names = TRUE,
+                       recursive = TRUE)
+
 value_filter_year_min_xml <- 2014
-value_filter_year_max_xml <- as.numeric(substr(Sys.Date(), start = 1, stop = 4))
+value_filter_year_max_xml <- as.numeric(substr(base_date, start = 1, stop = 4))
 
 df_list_xml <- data.frame(path = list_xml,
-                         year = stri_extract(str = list_xml, regex = "(?<=[0-9]/)(19[8-9][0-9]|20[0-2][0-9])"))
+                          year = stri_extract(str = list_xml, regex = "(?<=[0-9]/)(19[8-9][0-9]|20[0-2][0-9])"))
 df_list_xml <- df_list_xml[(df_list_xml$year <= value_filter_year_max_xml) & (df_list_xml$year >= value_filter_year_min_xml), ]
 
 start_xml <- 1
@@ -88,10 +90,10 @@ for(n_file in start_xml:end_xml){
     ifelse(test = . == "", yes = NA, no = .) %>%
     as.numeric() -> table_sub_data
   
-  df_table_hour = data.frame(var = table_sub_names,
-                             value = table_sub_data)
-  table_hour_name = table_name
-  table_hour_etc = table_sub_comment
+  df_table_hour <- data.frame(var = table_sub_names,
+                              value = table_sub_data)
+  table_hour_name <- table_name
+  table_hour_etc <- table_sub_comment
   
   # main audit
   xml_doc %>%
@@ -111,9 +113,9 @@ for(n_file in start_xml:end_xml){
     ifelse(test = . == "-", yes = NA, no = .) %>%
     gsub(pattern = "\\&cr;|\\n", replacement = "") -> table_sub_data
   
-  df_table_main_audit = data.frame(var = table_sub_names,
-                                   value = table_sub_data)
-  table_main_audit_name = table_name
+  df_table_main_audit <- data.frame(var = table_sub_names,
+                                    value = table_sub_data)
+  table_main_audit_name <- table_name
   
   # communication
   if(sum(table_list %in% "D-0-2-4-0") == 1){
@@ -133,16 +135,16 @@ for(n_file in start_xml:end_xml){
       html_text() %>%
       gsub(pattern = "\\&cr;", replacement = ", ") -> table_sub_data
     
-    df_table_com = data.frame(var = table_sub_names,
-                              value = table_sub_data)
+    df_table_com <- data.frame(var = table_sub_names,
+                               value = table_sub_data)
     
-    df_table_com[, "obs"] = rep(1:(nrow(df_table_com)/4), each = 4)
-    df_table_com = reshape2::dcast(df_table_com, formula = "obs ~ var", value.var = "value", fill = NA)
+    df_table_com[, "obs"] <- rep(1:(nrow(df_table_com)/4), each = 4)
+    df_table_com <- reshape2::dcast(df_table_com, formula = "obs ~ var", value.var = "value", fill = NA)
     
-    table_sub_com_name = table_name
+    table_sub_com_name <- table_name
   } else {
-    df_table_com = data.frame()
-    table_sub_com_name = NA
+    df_table_com <- data.frame()
+    table_sub_com_name <- NA
   }
   
   # audit opinion
@@ -159,36 +161,36 @@ for(n_file in start_xml:end_xml){
       strsplit(split = "\\n|&cr;|cr;|&amp") %>% 
       unlist() -> xml_doc_report_text
     
-    xml_doc_report_text_pos = grep(pattern = "usermark.{2,5}B", x = xml_doc_report_text)
-    xml_doc_report_text_pos = xml_doc_report_text_pos[nchar(xml_doc_report_text[xml_doc_report_text_pos]) < 50]
+    xml_doc_report_text_pos <- grep(pattern = "usermark.{2,5}B", x = xml_doc_report_text)
+    xml_doc_report_text_pos <- xml_doc_report_text_pos[nchar(xml_doc_report_text[xml_doc_report_text_pos]) < 50]
     
-    xml_doc_report_text[xml_doc_report_text_pos] = paste0("@", xml_doc_report_text[xml_doc_report_text_pos]) 
+    xml_doc_report_text[xml_doc_report_text_pos] <- paste0("@", xml_doc_report_text[xml_doc_report_text_pos]) 
     
     xml_doc_report_text %>% 
       gsub(pattern = "<.*?>", replacement = "") %>% 
       gsub(pattern = " {2,}", replacement = " ") %>% 
       gsub(pattern = "^ | $|;$", replacement = "") -> xml_doc_report_text
     
-    xml_doc_report_text = xml_doc_report_text[!(xml_doc_report_text %in% c("", "@"))]
+    xml_doc_report_text <- xml_doc_report_text[!(xml_doc_report_text %in% c("", "@"))]
     
-    xml_doc_report_date_pos = grep(pattern = "^[0-9]{4}..[0-9]{1,2}", xml_doc_report_text)[1]
+    xml_doc_report_date_pos <- grep(pattern = "^[0-9]{4}..[0-9]{1,2}", xml_doc_report_text)[1]
     if(is.na(xml_doc_report_date_pos) == FALSE){
-      xml_doc_report_text = c(xml_doc_report_text[1:(xml_doc_report_date_pos - 1)],
-                              paste(xml_doc_report_text[xml_doc_report_date_pos:length(xml_doc_report_text)], collapse = " "))    
-      xml_doc_report_text = xml_doc_report_text[nchar(xml_doc_report_text) > 1]
+      xml_doc_report_text <- c(xml_doc_report_text[1:(xml_doc_report_date_pos - 1)],
+                               paste(xml_doc_report_text[xml_doc_report_date_pos:length(xml_doc_report_text)], collapse = " "))    
+      xml_doc_report_text <- xml_doc_report_text[nchar(xml_doc_report_text) > 1]
     } 
     
-    list_doc_report = xml_doc_report_text
+    list_doc_report <- xml_doc_report_text
   } else {
-    list_doc_report = NA
+    list_doc_report <- NA
   }
   
   
-  df_corp_info = read.csv(grep(pattern = corp_code, x = list_doc, value = TRUE))
-  df_corp_info[, "rcept_no"] = as.character(df_corp_info$rcept_no)
+  df_corp_info <- read.csv(grep(pattern = corp_code, x = list_doc, value = TRUE))
+  df_corp_info[, "rcept_no"] <- as.character(df_corp_info$rcept_no)
   
-  recept_no = stri_extract(str = df_list_xml[n_file, "path"], regex = "(?<=\\/)[0-9]{12,15}")
-  doc_loc = grep(pattern = recept_no, df_corp_info$rcept_no)
+  recept_no <- stri_extract(str = df_list_xml[n_file, "path"], regex = "(?<=\\/)[0-9]{12,15}")
+  doc_loc <- grep(pattern = recept_no, df_corp_info$rcept_no)
   
   meta_report_audit <- list("fiscal_year" = substr(audit_date_end, start = 1, stop = 4), 
                             "year_end" = substr(audit_date_end, start = 5, stop = 8), 
@@ -201,7 +203,7 @@ for(n_file in start_xml:end_xml){
                             "flr_name" = df_corp_info[1, "flr_nm"], 
                             "rcept_dt" = df_corp_info[doc_loc, "rcept_dt"], 
                             "rm" = df_corp_info[1, "rm"],
-                            "turn" = "51")
+                            "turn" = "51") # 회기에 대한 이해는 당연히 없음
   
   # 내부회계관리제도 감사
   xml_doc %>% 
@@ -216,17 +218,16 @@ for(n_file in start_xml:end_xml){
     strsplit(split = "\\n|&cr;|cr;|&amp") %>% 
     unlist() -> xml_doc_internal_text 
   
-  xml_doc_internal_text_pos = grep(pattern = "usermark", x = xml_doc_internal_text)
+  xml_doc_internal_text_pos <- grep(pattern = "usermark", x = xml_doc_internal_text)
   
-  xml_doc_internal_text[xml_doc_internal_text_pos] = paste0("@", xml_doc_internal_text[xml_doc_internal_text_pos]) 
+  xml_doc_internal_text[xml_doc_internal_text_pos] <- paste0("@", xml_doc_internal_text[xml_doc_internal_text_pos]) 
   
   xml_doc_internal_text %>% 
     gsub(pattern = "<.*?>", replacement = "") %>% 
     gsub(pattern = " {2,}", replacement = " ") %>% 
     gsub(pattern = "^ | $|;$", replacement = "") -> xml_doc_internal_text
   
-  list_doc_internal = xml_doc_internal_text
-  
+  list_doc_internal <- xml_doc_internal_text
   
   if(sum(df_table_hour$var == "NUM_QLT_TH") == 1){
     auditors <- list(quality_ctrl = list("품질관리검토자" = df_table_hour[df_table_hour$var == "NUM_QLT_TH", "value"]), 
@@ -285,7 +286,7 @@ for(n_file in start_xml:end_xml){
   
   # 외부 감사 실시 내용(집합)을 json으로 변형
   external_audit_contents <- jsonlite::toJSON(external_audit_contents, pretty = TRUE, auto_unbox = TRUE)
-  external_audit_contents = iconv(external_audit_contents, from = "UTF-8", to = "CP949")
+  external_audit_contents <- iconv(external_audit_contents, from = "UTF-8", to = "CP949")
   
   # 내부회계관리제도 감사 또는 검토 의견 중 독립된 감사인의 내부회계관리제도 감사보고서
   internal_accounting_audit <- list(list_doc_report)
@@ -301,43 +302,44 @@ for(n_file in start_xml:end_xml){
   
   # 내부회계관리제도 감사 또는 검토 의견(집합)을 json으로 변형
   internal_accounting_contents <- jsonlite::toJSON(internal_accounting_contents, pretty = TRUE, auto_unbox = TRUE)
-  internal_accounting_contents = iconv(internal_accounting_contents, from = "UTF-8", to = "CP949")
+  internal_accounting_contents <- iconv(internal_accounting_contents, from = "UTF-8", to = "CP949")
   
   # [[ write files ]]
-  dir_corp = paste0("corp_no_", corp_code)
+  dir_corp <- paste0("corp_code_", corp_code)
   
   # write - json
-  dir_path_json = paste0(audit_report_parsed_json_Dir, dir_corp)
+  dir_path_json <- file.path(main_dir, audit_report_parsed_json_aud, dir_corp)
   dir.create(path = dir_path_json, showWarnings = FALSE, recursive = TRUE)
   
   # json writing - external
-  file_name_external = paste(corp_code,  
-                             substr(audit_date_end, start = 1, stop = 4),
-                             recept_no, 
-                             doc_code,
-                             "external_audit_contents.json", sep = "_")
+  file_name_external <- paste(corp_code,  
+                              substr(audit_date_end, start = 1, stop = 4),
+                              recept_no, 
+                              doc_code,
+                              "external_audit_contents.json", sep = "_")
   write(external_audit_contents, 
         paste(dir_path_json, file_name_external, sep = "/"))
   
   # json writing - internal
-  file_name_internal = paste(corp_code,  
-                             substr(audit_date_end, start = 1, stop = 4),
-                             recept_no, 
-                             doc_code,
-                             "internal_accounting_contents.json", sep = "_")
+  file_name_internal <- paste(corp_code,  
+                              substr(audit_date_end, start = 1, stop = 4),
+                              recept_no, 
+                              doc_code,
+                              "internal_accounting_contents.json", sep = "_")
   
   write(internal_accounting_contents,
         paste(dir_path_json, file_name_internal, sep = "/")) 
   
   # write - rds
-  dir_path_rds = paste0(audit_report_parsed_rds_Dir, dir_corp)
+  dir_path_rds <- file.path(main_dir, audit_report_parsed_rds_aud, dir_corp)
   dir.create(path = dir_path_rds, showWarnings = FALSE, recursive = TRUE)
   
-  file_name_rds = paste(corp_code,  
-                        substr(audit_date_end, start = 1, stop = 4),
-                        recept_no, 
-                        doc_code,
-                        "contents_both.rds", sep = "_")
+  file_name_rds <- paste(corp_code,  
+                         substr(audit_date_end, start = 1, stop = 4),
+                         recept_no, 
+                         doc_code,
+                         "contents_both.rds", sep = "_")
+  
   saveRDS(list(internal = internal_accounting_contents,
                external = external_audit_contents),
           paste(dir_path_rds, file_name_rds, sep = "/"))
