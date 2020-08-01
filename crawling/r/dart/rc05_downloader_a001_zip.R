@@ -23,13 +23,13 @@ for(n_file in start_a001:end_a001){
   print(n_file)
   
   for(n_row in 1:nrow(list_a001)){
-    recept_no <- as.character(list_a001[n_row, "rcept_no"])
+    rcept_no <- as.character(list_a001[n_row, "rcept_no"])
     
     request_url_a001 <- paste0("https://opendart.fss.or.kr/api/document.xml?",
                                "&crtfc_key=", key_dart,
-                               "&rcept_no=", recept_no)
+                               "&rcept_no=", rcept_no)
     
-    path_zip <- paste(path_dir, "/", list_a001[n_row, "year"], "_", recept_no, ".zip", sep = "")
+    path_zip <- paste(path_dir, "/", list_a001[n_row, "year"], "_", rcept_no, ".zip", sep = "")
     
     download.file(url = request_url_a001, destfile = path_zip,
                   mode = "wb", 
