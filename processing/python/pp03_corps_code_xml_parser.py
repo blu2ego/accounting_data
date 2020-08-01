@@ -20,4 +20,4 @@ for corps_code_element in fun_code_list:
   df_corps_code = pd.concat([df_corps_code, df_corps_code_sub])
   
 df_corps_code.columns = ["corp_code", "corp_name", "stock_code", "modify_date"]
-df_corps_code.to_csv("../csv/corps_code_parsed_" + base_date + ".csv")
+df_corps_code.to_csv("../csv/corps_code_parsed_" + base_date + ".csv", index = False)
