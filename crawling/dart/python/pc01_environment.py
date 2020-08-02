@@ -20,41 +20,40 @@ def dir_maker(path):
 # setting base date
 base_date = time.strftime('%Y-%m-%d', time.localtime(time.time()))
 
-# setting base path
+# set main path
 mainDir = ""
 
-# setting additional paths and making directories
-corps_code_zip_Dir = "results/corps_code/zip/"
-corps_code_unzip_Dir = "results/corps_code/xml/"
-corps_code_parsed_csv_Dir = "results/corps_code/csv/"
+# set addtional path and create directories related to corp_code
+corps_code_zip_Dir        = "results/dart/corps_code/zip/"
+corps_code_unzip_Dir      = "results/dart/corps_code/zip/"
+corps_code_parsed_csv_Dir = "results/dart/corps_code/zip/"
 
 dir_maker(mainDir + corps_code_zip_Dir)
 dir_maker(mainDir + corps_code_unzip_Dir)
 dir_maker(mainDir + corps_code_parsed_csv_Dir)
 
-# setting additional paths and making directories related to A001
-biz_report_list_xml_Dir = "results/biz_report/xml/" + base_date + "/"
-biz_report_list_csv_Dir = "results/biz_report/csv/" + base_date + "/"
-biz_report_zip = "results/biz_report/zip/" + base_date + "/"
-biz_report_pdf = "results/biz_report/pdf/" + base_date + "/"
-biz_report_doc = "results/biz_report/doc/" + base_date + "/"
+# set addtional path and create directories related to a001
+biz_report_list_xml_dir = "results/dart/biz_report_list/xml/" + base_date + "/"
+biz_report_list_csv_dir = "results/dart/biz_report_list/csv/" + base_date + "/"
+biz_report_zip          = "results/dart/biz_report/zip/" +      base_date + "/"
 
-
-dir_maker(mainDir + biz_report_list_xml_Dir)
-dir_maker(mainDir + biz_report_list_csv_Dir)
+dir_maker(mainDir + biz_report_list_xml_dir)
+dir_maker(mainDir + biz_report_list_csv_dir)
 dir_maker(mainDir + biz_report_zip)
-dir_maker(mainDir + biz_report_pdf)
-dir_maker(mainDir + biz_report_doc)
 
-# setting additional paths and making directories related to F001
-audit_report_list_xml_Dir = "results/audit_report/xml/" + base_date + "/"
-audit_report_list_csv_Dir = "results/audit_report/csv/" + base_date + "/"
-audit_report_zip = "results/audit_report/zip/" + base_date + "/"
-audit_report_pdf = "results/audit_report/pdf/" + base_date + "/"
-audit_report_doc = "results/audit_report/doc/" + base_date + "/"
+# set addtional path and create directories related to f001
+audit_report_list_xml_dir = "results/dart/audit_report_list/xml/" + base_date + "/"
+audit_report_list_csv_dir = "results/dart/audit_report_list/csv/" + base_date + "/"
+audit_report_zip          = "results/dart/audit_report/zip/" + base_date + "/"
+audit_report_xml_from_biz = "results/dart/audit_report/xml/from_biz/" + base_date + "/"
+audit_report_xml_from_aud = "results/dart/audit_report/xml/from_aud/" + base_date + "/"
+audit_report_pdf_from_biz = "results/dart/audit_report/pdf/from_biz/" + base_date + "/"
+audit_report_pdf_from_aud = "results/dart/audit_report/pdf/from_aud/" + base_date + "/" 
 
-dir_maker(mainDir + audit_report_list_xml_Dir)
-dir_maker(mainDir + audit_report_list_csv_Dir)
+dir_maker(mainDir + audit_report_list_xml_dir)
+dir_maker(mainDir + audit_report_list_csv_dir)
 dir_maker(mainDir + audit_report_zip)
-dir_maker(mainDir + audit_report_pdf)
-dir_maker(mainDir + audit_report_doc)
+dir_maker(mainDir + audit_report_xml_from_biz)
+dir_maker(mainDir + audit_report_xml_from_aud)
+dir_maker(mainDir + audit_report_pdf_from_biz)
+dir_maker(mainDir + audit_report_pdf_from_aud)
