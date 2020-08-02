@@ -25,8 +25,8 @@ mainDir = ""
 
 # set addtional path and create directories related to corp_code
 corps_code_zip_Dir        = "results/dart/corps_code/zip/"
-corps_code_unzip_Dir      = "results/dart/corps_code/zip/"
-corps_code_parsed_csv_Dir = "results/dart/corps_code/zip/"
+corps_code_unzip_Dir      = "results/dart/corps_code/xml/"
+corps_code_parsed_csv_Dir = "results/dart/corps_code/csv/"
 
 dir_maker(mainDir + corps_code_zip_Dir)
 dir_maker(mainDir + corps_code_unzip_Dir)
