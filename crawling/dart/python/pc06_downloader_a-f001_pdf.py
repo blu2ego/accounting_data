@@ -21,13 +21,15 @@ end_a001 = len(list_a001s_csv)
 time_delay_a001 = 1
 
 for n_a001s in start_a001:end_a001:
-  # list_a001 = read.csv(list_a001s_csv[n_a001s], header = T)
-  # list_a001[, "year"] = as.numeric(stri_extract(str = list_a001$report_nm, regex = "[0-9]{4}"))
-  # list_a001 = list_a001[(list_a001$year <= value_filter_year_max_a001) & (list_a001$year >= value_filter_year_min_a001), ]
+  list_a001 = pd.read_csv(list_a001s_csv[n_a001s])
+  list_a001["year"] = list_a001["report_nm"].str.extract(pat = "([0-9]{4})")
+  list_a001 = list_a001.loc[(list_a001["year"] <= value_filter_year_max_a001) & (list_a001["year"] >= value_filter_year_min_a001), ]
   
   print(n_a001s)
   
   if len(list_a001) > 0:
+    corp_code_a001 = "{:08}".format(list_a001.loc[0, "corp_code"])
+    
     # corp_code = sprintf(fmt = "%08d", list_a001[1, "corp_code"]) # corp_code 기준으로 디렉토리 만들기 위한 작업
     
     # path_dir = paste0(main_dir, audit_report_pdf_from_biz, "corp_code_", corp_code)
