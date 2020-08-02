@@ -2,6 +2,7 @@
 ## /ward/processing/dart/r/pdr01_environments.R ##
 ##################################################
 
+# loading required libraries
 library(stringi)
 library(jsonlite)
 library(tabulizer)
