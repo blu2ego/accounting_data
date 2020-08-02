@@ -1,7 +1,7 @@
 exec(open("C:/Users/Encaion/Documents/41_outsource/crawling_DART_package/crawling/python/pc01_environment.py").read())  
 
 # set working directory
-os.chdir(mainDir + corps_code_unzip_Dir)
+os.chdir(main_dir + corps_code_unzip_dir)
 
 # loading required libraries
 from bs4 import BeautifulSoup
