@@ -1,7 +1,7 @@
 exec(open("C:/Users/Encaion/Documents/41_outsource/crawling_DART_package/crawling/python/pc01_environment.py").read())
 
 # set working directory
-os.chdir(mainDir + biz_report_list_csv_Dir)
+os.chdir(mainDir + biz_report_list_csv_dir)
 
 # loading required libraries
 import pandas as pd

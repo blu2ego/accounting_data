@@ -1,7 +1,7 @@
 exec(open("C:/Users/Encaion/Documents/41_outsource/crawling_DART_package/crawling/python/pc01_environment.py").read())
 
 # set working directory
-os.chdir(mainDir + corps_code_parsed_csv_Dir)
+os.chdir(mainDir + corps_code_parsed_csv_dir)
 
 # loading required libraries
 import pandas as pd
@@ -21,7 +21,7 @@ pblntf_detail_ty_f001 = "f001"
 page_count_f001 = 100
 
 start_f001 = 0
-end_f001 = len(corps_code_f001) - 1
+end_f001 = len(corps_code_f001)
 time_delay_f001 = 1
 
 for i in arange(start_f001, end_f001):
@@ -41,7 +41,7 @@ for i in arange(start_f001, end_f001):
   
   report_f001 = requests.get(request_url_f001)
   
-  xml_file_name = mainDir + audit_report_list_xml_Dir + "f001_" + corp_code_f001 + ".xml"
+  xml_file_name = mainDir + audit_report_list_xml_dir + "f001_" + corp_code_f001 + ".xml"
   
   with open(xml_file_name, "wb") as file:
       file.write(report_f001.content)
