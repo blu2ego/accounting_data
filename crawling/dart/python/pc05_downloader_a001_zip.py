@@ -1,7 +1,7 @@
 exec(open("C:/Users/Encaion/Documents/41_outsource/crawling_DART_package/crawling/python/pc01_environment.py").read())
 
 # set working directory
-os.chdir(mainDir + biz_report_list_csv_dir)
+os.chdir(main_dir + biz_report_list_csv_dir)
 
 # loading required libraries
 import pandas as pd
@@ -23,7 +23,7 @@ for n_file in arange(start_a001, end_a001):
   
   corp_code_a001 = "{:08}".format(list_a001.loc[0, "corp_code"]) 
    
-  path_dir = "../../../../" + mainDir + biz_report_zip + "corp_code_" + corp_code_a001
+  path_dir = "../../../../" + main_dir + biz_report_zip + "corp_code_" + corp_code_a001
   os.makedirs(path_dir)
   
   print(n_file)
