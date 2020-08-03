@@ -35,5 +35,5 @@ external_audit_contents <- list("보고서" = meta_report_audit, "감사참여�
 external_audit_contents <- jsonlite::toJSON(external_audit_contents, pretty = TRUE, auto_unbox = TRUE)
 
 # json 파일로 writing 하려면,
-write(external_audit_contents, "~/projects/wrangling_accounting_related_data/data/sample/external_audit_contents.json") 
+write(external_audit_contents, "~/projects/ward/results/dart/for_accounting/samples/external_audit_contents.json") 
 
