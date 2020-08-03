@@ -26,5 +26,4 @@ internal_accounting_contents <- list("보고서" = meta_report_audit, "독립된
 internal_accounting_contents <- jsonlite::toJSON(internal_accounting_contents, pretty = TRUE, auto_unbox = TRUE)
 
 # json 파일로 writing 하려면,
-write(internal_accounting_contents, "~/projects/wrangling_accounting_related_data/data/sample/internal_accounting_contents.json") 
-
+write(internal_accounting_contents, "~/projects/ward/results/dart/for_accounting/sample/internal_accounting_contents.json") 
