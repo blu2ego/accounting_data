@@ -40,7 +40,6 @@ prf_time_yearend <- c("전산감사 등 전문가" = 4287,
 auditors_time_yearend <- c(quality_ctrl_time_yearend, cpa_time_yearend, prf_time_yearend)
 
 # 외부 감사 실시 내용(집합)
-# 보고서 메타 데이터(감사보고서)
 external_audit_contents <- list("삼성전자_00126380" = 
                                   list("fiscal_year" = 
                                          list("year_end" = "1231", 
