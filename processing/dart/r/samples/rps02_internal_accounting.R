@@ -14,24 +14,25 @@ internal_accounting_operation <- c("보고서" = '추가 예정')
 # 내부회계관리제도 감사 또는 검토 의견(집합)
 
 
-internal_accounting_contents <- list("삼성전자_00126380" = 
-                                  list("fiscal_year" = 
-                                         list("year_end" = "1231", 
-                                              "corp_cls" = "Y", 
-                                              "corp_name" = "삼성전자",
-                                              "corp_code" = "00126380", 
-                                              "stock_code" = "005930", 
-                                              "report_name" = "감사보고서",  
-                                              "rcept_no" = "20030807000168", 
-                                              "flr_name" = "삼일회계법인", 
-                                              "rcept_dt" = "20030807", 
-                                              "rm" = "Y",
-                                              "독립된 감사인의 내부회계관리제도 감사보고서" = internal_accounting_audit, 
-                                              "내부회계관리제도 운영실태 보고" = internal_accounting_operation))
-                                    )
+internal_accounting <- list("corp_code" = 
+                              list("fiscal_year" = 
+                                     list("year_end" = "1231", 
+                                          "corp_cls" = "Y", 
+                                          "corp_name" = "삼성전자",
+                                          "corp_code" = "00126380", 
+                                          "stock_code" = "005930", 
+                                          "report_name" = "감사보고서",  
+                                          "rcept_no" = "20030807000168", 
+                                          "flr_name" = "삼일회계법인", 
+                                          "rcept_dt" = "20030807", 
+                                          "rm" = "Y",
+                                          "독립된 감사인의 내부회계관리제도 감사보고서" = internal_accounting_audit, 
+                                          "내부회계관리제도 운영실태 보고" = internal_accounting_operation)
+                                   )
+                           )
                                   
 # 내부회계관리제도 감사 또는 검토 의견(집합)을 json으로 변형
-internal_accounting_contents <- jsonlite::toJSON(internal_accounting_contents, pretty = TRUE, auto_unbox = TRUE)
+internal_accounting <- jsonlite::toJSON(internal_accounting_contents, pretty = TRUE, auto_unbox = TRUE)
 
 # json 파일로 writing 하려면,
-write(internal_accounting_contents, "~/projects/ward/results/dart/for_accounting/samples/internal_accounting_contents.json") 
+write(internal_accounting, "~/projects/ward/results/dart/for_accounting/samples/internal_accounting.json") 
