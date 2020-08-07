@@ -37,14 +37,14 @@ ifelse(!dir.exists(file.path(main_dir, biz_report_list_xml_dir)), dir.create(fil
 ifelse(!dir.exists(file.path(main_dir, biz_report_list_csv_dir)), dir.create(file.path(main_dir, biz_report_list_csv_dir)), FALSE)
 ifelse(!dir.exists(file.path(main_dir, biz_report_zip)),          dir.create(file.path(main_dir, biz_report_zip)), FALSE)
 
-# F001 관련 경로 설정 및 디렉토리 생성
+# set addtional path and create directories related to F001
 audit_report_list_xml_dir <- file.path("results/dart/audit_report_list/xml/", base_date, "/")
 audit_report_list_csv_dir <- file.path("results/dart/audit_report_list/csv/", base_date, "/")
-audit_report_zip          <- file.path("results/dart/audit_report/zip/", base_date, "/")
-audit_report_xml_from_biz <- file.path("results/dart/audit_report/xml/from_biz", base_date, "/")
-audit_report_xml_from_aud <- file.path("results/dart/audit_report/xml/from_aud", base_date, "/")
-audit_report_pdf_from_biz <- file.path("results/dart/audit_report/pdf/from_biz/", base_date, "/")
-audit_report_pdf_from_aud <- file.path("results/dart/audit_report/pdf/from_aud/", base_date, "/") 
+audit_report_zip          <- file.path("results/dart/audit_report/zip/")
+audit_report_xml_from_biz <- file.path("results/dart/audit_report/xml/from_biz/")
+audit_report_xml_from_aud <- file.path("results/dart/audit_report/xml/from_aud/")
+audit_report_pdf_from_biz <- file.path("results/dart/audit_report/pdf/from_biz/")
+audit_report_pdf_from_aud <- file.path("results/dart/audit_report/pdf/from_aud/") 
 
 ifelse(!dir.exists(file.path(main_dir, audit_report_list_xml_dir)), dir.create(file.path(main_dir, audit_report_list_xml_dir)), FALSE)
 ifelse(!dir.exists(file.path(main_dir, audit_report_list_csv_dir)), dir.create(file.path(main_dir, audit_report_list_csv_dir)), FALSE)
