@@ -18,7 +18,7 @@ list_xml <- list.files(path = paste0(main_dir, audit_report_xml_from_aud),
                        full.names = TRUE,
                        recursive = TRUE)
 
-value_filter_year_min_xml <- 2014
+value_filter_year_min_xml <- 2015
 value_filter_year_max_xml <- as.numeric(substr(base_date, start = 1, stop = 4))
 
 df_list_xml <- data.frame(path = list_xml,
@@ -285,8 +285,7 @@ for(n_file in start_xml:end_xml){
                                                                 "감사(시간)" = auditors_time_yearend))
   
   # 외부 감사 실시 내용(집합)을 json으로 변형
-  external_audit_contents <- jsonlite::toJSON(external_audit_contents, pretty = TRUE, auto_unbox = TRUE)
-  external_audit_contents <- iconv(external_audit_contents, from = "UTF-8", to = "CP949")
+  external_audit_contents <- toJSON(external_audit_contents, pretty = TRUE, auto_unbox = TRUE)
   
   # 내부회계관리제도 감사 또는 검토 의견 중 독립된 감사인의 내부회계관리제도 감사보고서
   internal_accounting_audit <- list(list_doc_report)
@@ -301,8 +300,7 @@ for(n_file in start_xml:end_xml){
   
   
   # 내부회계관리제도 감사 또는 검토 의견(집합)을 json으로 변형
-  internal_accounting_contents <- jsonlite::toJSON(internal_accounting_contents, pretty = TRUE, auto_unbox = TRUE)
-  internal_accounting_contents <- iconv(internal_accounting_contents, from = "UTF-8", to = "CP949")
+  internal_accounting_contents <- toJSON(internal_accounting_contents, pretty = TRUE, auto_unbox = TRUE)
   
   # [[ write files ]]
   dir_corp <- paste0("corp_code_", corp_code)
@@ -317,8 +315,9 @@ for(n_file in start_xml:end_xml){
                               recept_no, 
                               doc_code,
                               "external_audit_contents.json", sep = "_")
-  write(external_audit_contents, 
-        paste(dir_path_json, file_name_external, sep = "/"))
+  write_json(external_audit_contents, 
+             paste(dir_path_json, file_name_external, sep = "/"),
+             encoding = "UTF-8")
   
   # json writing - internal
   file_name_internal <- paste(corp_code,  
@@ -327,8 +326,9 @@ for(n_file in start_xml:end_xml){
                               doc_code,
                               "internal_accounting_contents.json", sep = "_")
   
-  write(internal_accounting_contents,
-        paste(dir_path_json, file_name_internal, sep = "/")) 
+  write_json(internal_accounting_contents,
+             paste(dir_path_json, file_name_internal, sep = "/"),
+             encoding = "UTF-8") 
   
   # write - rds
   dir_path_rds <- file.path(main_dir, audit_report_parsed_rds_aud, dir_corp)
