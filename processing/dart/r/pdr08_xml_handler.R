@@ -26,10 +26,10 @@ df_list_xml <- data.frame(path = list_xml,
 df_list_xml <- df_list_xml[(df_list_xml$year <= value_filter_year_max_xml) & (df_list_xml$year >= value_filter_year_min_xml), ]
 # head(df_list_xml)
 
+corp_list = unlist(unique(stri_extract_all(str = df_list_xml$path, regex = "(?<=corp_no_)[0-9]{6,10}")))
+
 meta_report_audit_external = list()
 meta_report_audit_internal = list()
-
-corp_list = unlist(unique(stri_extract_all(str = df_list_xml$path, regex = "(?<=corp_no_)[0-9]{6,10}")))
 
 start_corp = 1
 end_corp = length(corp_list)
@@ -41,7 +41,7 @@ for(n_corp in start_corp:end_corp){
   meta_report_audit_internal_corp = list()
   
   for(n_file in 1:nrow(df_list_xml_sub)){
-    # n_file = 1
+    # n_file = 6
     print(n_file)
     xml_doc <- tryCatch(expr = {
       read_html(df_list_xml_sub[n_file, "path"], encoding = "CP949")
@@ -106,7 +106,6 @@ for(n_corp in start_corp:end_corp){
     
     df_table_hour <- data.frame(var = table_sub_names,
                                 value = table_sub_data)
-    table_hour_name <- table_name
     table_hour_etc <- table_sub_comment
     
     # main audit
@@ -127,11 +126,12 @@ for(n_corp in start_corp:end_corp){
       ifelse(test = . == "-", yes = NA, no = .) %>%
       gsub(pattern = "\\&cr;|\\n", replacement = "") -> table_sub_data
     
-    df_table_main_audit <- data.frame(var = table_sub_names,
-                                      value = table_sub_data)
-    table_main_audit_name <- table_name
+    list_table_main_audit <- list(table_sub_data)
+    names(list_table_main_audit[[1]]) = table_sub_names
+    
     
     # communication
+    list_table_com = list()
     if(sum(table_list %in% "D-0-2-4-0") == 1){
       xml_doc %>%
         html_nodes(xpath = '//*/title[@aassocnote="D-0-2-4-0"]/..//title') %>%
@@ -155,7 +155,10 @@ for(n_corp in start_corp:end_corp){
       df_table_com[, "obs"] <- rep(1:(nrow(df_table_com)/4), each = 4)
       df_table_com <- reshape2::dcast(df_table_com, formula = "obs ~ var", value.var = "value", fill = NA)
       
-      table_sub_com_name <- table_name
+      for(n_row in 1:nrow(df_table_com)){
+        list_table_com[[n_row]] = as.list(df_table_com[n_row, ])
+        names(list_table_com)[n_row] = n_row
+      }
     } else {
       df_table_com <- data.frame()
       table_sub_com_name <- NA
@@ -209,7 +212,8 @@ for(n_corp in start_corp:end_corp){
     xml_doc %>% 
       html_nodes(xpath = '//*/td[@usermark="F-BT14"]') %>% 
       .[1] %>% 
-      html_text() -> doc_turn
+      html_text() %>% 
+      gsub(pattern = "\\n", replacement = "") -> doc_turn
     
     meta_report_audit <- list("year_end" = substr(audit_date_end, start = 5, stop = 8), 
                               "corp_cls" = df_corp_info[1, "corp_cls"], 
@@ -276,8 +280,11 @@ for(n_corp in start_corp:end_corp){
     # 외부 감사 실시 내용(집합)
     external_audit_contents <- list("보고서" = meta_report_audit, 
                                     "감사참여자 구분별 인원수 및 감사시간" = list("투입 인원수" = auditors, 
-                                                                  "분/반기검토(시간)" = auditors_time_periodic,
-                                                                  "감사(시간)" = auditors_time_yearend))
+                                                                                  "분/반기검토(시간)" = auditors_time_periodic,
+                                                                                  "감사(시간)" = auditors_time_yearend),
+                                    "주요 감사실시내용" = list_table_main_audit[[1]],
+                                    "감사와의 커뮤니케이션" = list_table_com)
+    
     meta_report_audit_external_corp[[n_file]] = external_audit_contents
     names(meta_report_audit_external_corp)[n_file] <- substr(audit_date_end, start = 1, stop = 4)
     
@@ -302,6 +309,8 @@ for(n_corp in start_corp:end_corp){
       gsub(pattern = "<.*?>", replacement = "") %>% 
       gsub(pattern = " {2,}", replacement = " ") %>% 
       gsub(pattern = "^ | $|;$", replacement = "") -> xml_doc_internal_text
+    
+    xml_doc_internal_text <- xml_doc_internal_text[xml_doc_internal_text != ""]
     
     list_doc_internal <- xml_doc_internal_text
     
