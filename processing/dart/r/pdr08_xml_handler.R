@@ -159,10 +159,7 @@ for(n_corp in start_corp:end_corp){
         list_table_com[[n_row]] = as.list(df_table_com[n_row, ])
         names(list_table_com)[n_row] = n_row
       }
-    } else {
-      df_table_com <- data.frame()
-      table_sub_com_name <- NA
-    }
+    } 
     
     # audit opinion
     if(sum(table_list %in% "D-0-0-1-0") == 1){
@@ -226,7 +223,7 @@ for(n_corp in start_corp:end_corp){
                               "rcept_dt" = ifelse(test = length(df_corp_info[doc_loc, "rcept_dt"]) == 0, yes = NA, no = df_corp_info[doc_loc, "rcept_dt"]), 
                               "rm" = ifelse(test = df_corp_info[1, "rm"] == "", yes = NA, no = df_corp_info[1, "rm"]),
                               "turn" = doc_turn)
-
+    
     
     if(sum(df_table_hour$var == "NUM_QLT_TH") == 1){
       auditors <- list(quality_ctrl = list("품질관리검토자" = df_table_hour[df_table_hour$var == "NUM_QLT_TH", "value"]), 
@@ -280,8 +277,8 @@ for(n_corp in start_corp:end_corp){
     # 외부 감사 실시 내용(집합)
     external_audit_contents <- list("보고서" = meta_report_audit, 
                                     "감사참여자 구분별 인원수 및 감사시간" = list("투입 인원수" = auditors, 
-                                                                                  "분/반기검토(시간)" = auditors_time_periodic,
-                                                                                  "감사(시간)" = auditors_time_yearend),
+                                                                  "분/반기검토(시간)" = auditors_time_periodic,
+                                                                  "감사(시간)" = auditors_time_yearend),
                                     "주요 감사실시내용" = list_table_main_audit[[1]],
                                     "감사와의 커뮤니케이션" = list_table_com)
     
@@ -293,35 +290,41 @@ for(n_corp in start_corp:end_corp){
       html_nodes(xpath = "//*/section-1/image/..") %>% 
       html_children() -> xml_doc_internal
     
-    xml_doc_internal[1] %>% 
-      html_text() -> xml_doc_report_title
+    if(length(xml_doc_internal) > 0){
+      xml_doc_internal[1] %>% 
+        html_text() -> xml_doc_report_title
+      
+      xml_doc_internal[2:(grep(pattern = "<img", x = xml_doc_internal) - 1)] %>% 
+        as.character() %>% 
+        strsplit(split = "\\n|&cr;|cr;|&amp") %>% 
+        unlist() -> xml_doc_internal_text 
+      
+      xml_doc_internal_text_pos <- grep(pattern = "usermark", x = xml_doc_internal_text)
+      
+      xml_doc_internal_text[xml_doc_internal_text_pos] <- paste0("@", xml_doc_internal_text[xml_doc_internal_text_pos]) 
+      
+      xml_doc_internal_text %>% 
+        gsub(pattern = "<.*?>", replacement = "") %>% 
+        gsub(pattern = " {2,}", replacement = " ") %>% 
+        gsub(pattern = "^ | $|;$", replacement = "") -> xml_doc_internal_text
+      
+      list_doc_internal <- xml_doc_internal_text[xml_doc_internal_text != ""]
+    } else {
+      list_doc_internal <- NA
+    }
     
-    xml_doc_internal[-1] %>% 
-      as.character() %>% 
-      strsplit(split = "\\n|&cr;|cr;|&amp") %>% 
-      unlist() -> xml_doc_internal_text 
-    
-    xml_doc_internal_text_pos <- grep(pattern = "usermark", x = xml_doc_internal_text)
-    
-    xml_doc_internal_text[xml_doc_internal_text_pos] <- paste0("@", xml_doc_internal_text[xml_doc_internal_text_pos]) 
-    
-    xml_doc_internal_text %>% 
-      gsub(pattern = "<.*?>", replacement = "") %>% 
-      gsub(pattern = " {2,}", replacement = " ") %>% 
-      gsub(pattern = "^ | $|;$", replacement = "") -> xml_doc_internal_text
-    
-    xml_doc_internal_text <- xml_doc_internal_text[xml_doc_internal_text != ""]
-    
-    list_doc_internal <- xml_doc_internal_text
+    # 제무제표 감사에 대한 보고
+    internal_accounting_report <- list(list_doc_report)
     
     # 내부회계관리제도 감사 또는 검토 의견 중 독립된 감사인의 내부회계관리제도 감사보고서
-    internal_accounting_audit <- list(list_doc_report)
+    internal_accounting_audit <- list(list_doc_internal)
     
     # 내부회계관리제도 감사 또는 검토 의견 중 회사의 내부회계관리제도 운영실태보고서
-    internal_accounting_operation <- list(list_doc_internal)
+    internal_accounting_operation <- list(c("보고서" = '추가 예정') )
     
     # 내부회계관리제도 감사 또는 검토 의견(집합)
     internal_accounting_contents <- list("보고서" = meta_report_audit, 
+                                         "재무제표감사에대한 보고" = internal_accounting_report,
                                          "독립된 감사인의 내부회계관리제도 감사보고서" = internal_accounting_audit, 
                                          "내부회계관리제도 운영실태 보고" = internal_accounting_operation)
     
