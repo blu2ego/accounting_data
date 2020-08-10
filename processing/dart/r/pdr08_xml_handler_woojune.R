@@ -5,15 +5,16 @@
 library(stringr)
 library(stringi)
 library(xml2)
+library(rvest)
 
 # A001
-list_doc <- list.files(path = biz_report_list_csv_dir,
-                      recursive = TRUE,
-                      full.names = TRUE)
+# list_doc <- list.files(path = biz_report_list_csv_dir,
+#                        recursive = TRUE,
+#                        full.names = TRUE)
 
-list_xml = list.files(path = biz_report_doc, # 경로명 수정 필요
-                      recursive = TRUE,
-                      full.names = TRUE)
+# list_xml <- list.files(path = biz_report_doc, # 경로명 수정 필요
+#                       recursive = TRUE,
+#                       full.names = TRUE)
 
 # F001
 list_doc <- list.files(path = paste0(main_dir, audit_report_list_csv_dir), 
@@ -24,9 +25,17 @@ list_xml <- list.files(path = paste0(main_dir, audit_report_xml_from_aud),
                        recursive = TRUE,
                        full.names = TRUE)
 
+# directory for test
+list_doc <- list.files(path = "results/dart/for_accounting/samples/sample_csv/", 
+                       recursive = TRUE,
+                       full.names = TRUE)
+
+list_xml <- list.files(path = "results/dart/for_accounting/samples/sample_xml/",
+                       recursive = TRUE,
+                       full.names = TRUE)
 
 value_filter_year_min_xml <- 2015
-value_filter_year_max_xml <- as.numeric(substr(base_date, start = 1, stop = 4))
+value_filter_year_max_xml <- 2019 #as.numeric(substr(base_date, start = 1, stop = 4))
 
 df_list_xml <- data.frame(path = list_xml,
                           year = stri_extract(str = list_xml, regex = "(?<=[0-9]/)(19[8-9][0-9]|20[0-2][0-9])"))
