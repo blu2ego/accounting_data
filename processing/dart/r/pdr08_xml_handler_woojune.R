@@ -7,9 +7,9 @@ library(stringi)
 library(xml2)
 
 # A001
-list_doc <- list.files(path = biz_report_list_csv_dir,
-                      recursive = TRUE,
-                      full.names = TRUE)
+# list_doc <- list.files(path = biz_report_list_csv_dir,
+#                        recursive = TRUE,
+#                        full.names = TRUE)
 
 list_xml = list.files(path = biz_report_doc, # 경로명 수정 필요
                       recursive = TRUE,
