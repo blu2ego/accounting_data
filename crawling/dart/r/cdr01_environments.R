@@ -29,9 +29,9 @@ ifelse(!dir.exists(file.path(main_dir, corps_code_unzip_dir)),      dir.create(f
 ifelse(!dir.exists(file.path(main_dir, corps_code_parsed_csv_dir)), dir.create(file.path(main_dir, corps_code_parsed_csv_dir)), FALSE)
 
 # set addtional path and create directories related to a001
-biz_report_list_xml_dir <- file.path("results/dart/biz_report_list/xml/", base_date, "/")
-biz_report_list_csv_dir <- file.path("results/dart/biz_report_list/csv/", base_date, "/")
-biz_report_zip          <- file.path("results/dart/biz_report/zip/",      base_date, "/")
+biz_report_list_xml_dir <- file.path("results/dart/biz_report_list/xml/")
+biz_report_list_csv_dir <- file.path("results/dart/biz_report_list/csv/")
+biz_report_zip          <- file.path("results/dart/biz_report/zip/")
 
 ifelse(!dir.exists(file.path(main_dir, biz_report_list_xml_dir)), dir.create(file.path(main_dir, biz_report_list_xml_dir)), FALSE)
 ifelse(!dir.exists(file.path(main_dir, biz_report_list_csv_dir)), dir.create(file.path(main_dir, biz_report_list_csv_dir)), FALSE)
