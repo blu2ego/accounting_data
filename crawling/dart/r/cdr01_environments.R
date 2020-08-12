@@ -14,7 +14,6 @@ library(tidyverse)
 
 # set base date
 base_date <- Sys.Date()
-base_date <- "2020-07-30"
 
 # set main path
 main_dir <- "~/projects/ward/"
