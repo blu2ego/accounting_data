@@ -11,10 +11,10 @@ list_xml = list.files(path = biz_report_doc, # 경로명 수정 필요
                       full.names = TRUE)
 
 # F001
-list_doc <- list.files(path = paste0(main_dir, audit_report_list_csv_dir), 
+list_doc <- list.files(path = "C:/Users/Encaion/Documents/06_outsourcing/crawling_woojune/doc_list_F001_codes/",
                        full.names = TRUE)
 
-list_xml <- list.files(path = paste0(main_dir, audit_report_xml_from_aud),
+list_xml <- list.files(path = "C:/Users/Encaion/Documents/06_outsourcing/crawling_woojune/doc_list_F001_xml_download/",
                        full.names = TRUE,
                        recursive = TRUE)
 
@@ -38,6 +38,7 @@ start_corp = 1
 end_corp = length(corp_list)
 for(n_corp in start_corp:end_corp){
   # n_corp = 2
+  print(n_corp)
   df_list_xml_sub = df_list_xml[grep(pattern = paste0("corp_no_", corp_list[n_corp]), df_list_xml$path), ] 
   
   meta_report_audit_external_corp = list()
@@ -45,7 +46,7 @@ for(n_corp in start_corp:end_corp){
   
   for(n_file in 1:nrow(df_list_xml_sub)){
     # n_file = 1
-    print(n_file)
+    # print(n_file)
     xml_doc <- tryCatch(expr = {
       read_html(df_list_xml_sub[n_file, "path"], encoding = "CP949")
     }, error = function(x){
@@ -78,7 +79,7 @@ for(n_corp in start_corp:end_corp){
       .[!is.na(.)] -> table_list
     
     xml_doc %>%
-      html_nodes(xpath = '//*/tu[@aunit="SUB_PERIODTO"]') %>% 
+      html_nodes(xpath = '//*/tu[@aunit="SUB_PERIODTO"]|//*/tu[@aunit="PERIODTO2"]') %>% 
       html_text() %>% 
       gsub(pattern = "[^0-9]", replacement = "") -> audit_date_end
     
