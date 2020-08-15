@@ -1,9 +1,7 @@
 # loading required libraries
-from numpy import arange
 import pandas as pd
+import os
 import zipfile
-import requests
-import random
 
 # A001
 audit_report_parsed_rds_biz  = "results/dart/audit_report/rds/biz/"  + base_date + "/"
