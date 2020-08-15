@@ -5,7 +5,7 @@ os.chdir(main_dir + biz_report_list_csv_dir)
 list_a001s_csv = os.listdir()
 
 # download A001 files
-start_a001 = 1
+start_a001 = 0
 end_a001 = len(list_a001s_csv)
 time_delay_a001 = 1
 

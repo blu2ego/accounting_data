@@ -13,7 +13,7 @@ request_url_base_pdf = "http://dart.fss.or.kr/pdf/download/pdf.do?"
 value_filter_year_min_a001 = 2014
 value_filter_year_max_a001 = int(base_date[:4])
 
-start_a001 = 1
+start_a001 = 0
 end_a001 = len(list_a001s_csv)
 time_delay_a001 = 1
 

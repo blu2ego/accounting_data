@@ -5,7 +5,7 @@ os.chdir(main_dir + audit_report_list_csv_dir)
 list_f001s_csv = os.listdir()
 
 # download F001 files
-start_f001 = 1
+start_f001 = 0
 end_f001 = len(list_f001s_csv)
 time_delay_f001 = 1
 

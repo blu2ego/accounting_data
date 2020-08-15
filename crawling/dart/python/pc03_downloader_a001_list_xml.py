@@ -14,7 +14,7 @@ pblntf_ty_a001 = "A"
 pblntf_detail_ty_a001 = "A001"
 page_count_a001 = 100
 
-start_a001 = 1
+start_a001 = 0
 end_a001 = len(corps_code_a001)
 time_delay_a001 = 1
 
