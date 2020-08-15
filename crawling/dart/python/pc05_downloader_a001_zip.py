@@ -1,12 +1,6 @@
 # set working directory
 os.chdir(main_dir + biz_report_list_csv_dir)
 
-# loading required libraries
-import pandas as pd
-from numpy import arange
-import requests
-import random
-
 # importing list of A001 files
 list_a001s_csv = os.listdir()
 

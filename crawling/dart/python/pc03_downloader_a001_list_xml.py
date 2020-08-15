@@ -3,12 +3,6 @@ exec(open("C:/Users/Encaion/Documents/41_outsource/crawling_DART_package/crawlin
 # set working directory
 os.chdir(main_dir + corps_code_parsed_csv_dir)
 
-# loading required libraries
-import pandas as pd
-from numpy import arange
-import requests
-import random
-
 corps_code_a001 = pd.read_csv("corps_code_parsed_" + base_date + ".csv")
 
 os.chdir("../../../..")
