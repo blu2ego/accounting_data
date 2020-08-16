@@ -11,6 +11,7 @@ import time
 from numpy import arange
 import requests
 import random
+from download import download
 
 # UDF - dir_maker
 def dir_maker(path):

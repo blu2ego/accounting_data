@@ -22,13 +22,12 @@ for n_a001s in start_a001:end_a001:
   # list_a001 = pd.read_csv("doc_list_parsed_00100939.csv", encoding = "euc-kr")
   list_a001["year"] = list_a001["report_nm"].str.extract(pat = "([0-9]{4})").astype("int")
   list_a001 = list_a001.loc[(list_a001["year"] <= value_filter_year_max_a001) & (list_a001["year"] >= value_filter_year_min_a001), ]
-  
   print(n_a001s)
   
   if len(list_a001) > 0:
     corp_code_a001 = "{:08}".format(list_a001.loc[0, "corp_code"])
     
-    path_dir = main_dir + audit_report_pdf_from_biz + "corp_code_" + corp_code_a001
+    path_dir = main_dir + audit_report_pdf_from_biz + "corp_code_" + corp_code_a001 + "/"
     os.makedirs(path_dir)
     
     for n_a001 in arange(0, len(list_a001)):
@@ -42,11 +41,9 @@ for n_a001s in start_a001:end_a001:
       rcept_no_a001 = url_f001_no.split("&")[0].split("=")[1]
       dcm_no = url_f001_no.split("&")[1].split("=")[1]
       
-      path_pdf = path_dir + "/f001_" + corp_code_a001 + "_" + rcept_no_a001 + "_" + dcm_no + ".pdf"
+      path_pdf = path_dir + "f001_" + corp_code_a001 + "_" + rcept_no_a001 + "_" + dcm_no + ".pdf"
 
-      f001 = requests.get(request_url_a001)
-      with open(path_pdf, "wb") as file_f001:
-        file_f001.write(req.content)
+      downloaded_file_path = download(url_f001, path_pdf)
       
       Sys.sleep(time_delay_a001 + runif(1) * 2)
     } 

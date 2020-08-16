@@ -27,8 +27,8 @@ for n_f001s in arange(start_f001, end_f001):
   if len(list_f001) > 0:
     corp_code_f001 = "{:08}".format(list_f001.loc[0, "corp_code"]) 
     
-    path_dir = main_dir + audit_report_pdf_from_aud + "corp_code_" + corp_code_f001
-    # dir.create(path = path_dir, showWarnings = FALSE)
+    path_dir = main_dir + audit_report_pdf_from_aud + "corp_code_" + corp_code_f001 + "/"
+    os.makedirs(path_dir)
     
     for n_f001 in 0:len(list_f001):
       # print(n_f001)
@@ -44,7 +44,6 @@ for n_f001s in arange(start_f001, end_f001):
       
       path_pdf = path_dir + "/f001_" + corp_code_f001 + "_" + rcept_no_f001 + "_" + dcm_no + ".pdf"
       
-      # need download codes
-      
+      downloaded_file_path = download(url_f001, path_pdf)
       
       time.sleep(time_delay_f001 + random.uniform(0, 1) * 2)
