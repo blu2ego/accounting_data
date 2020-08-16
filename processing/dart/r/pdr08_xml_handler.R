@@ -5,20 +5,20 @@
 # A001
 list_doc <- list.files(path = file.path(main_dir, biz_report_list_csv_dir),
                        full.names = TRUE,
-                       recursive = T)
+                       recursive = TRUE)
 
 list_xml <- list.files(path = file.path(main_dir, audit_report_xml_from_biz), # 경로명 수정 필요
                        full.names = TRUE, 
-                       recursive = T)
+                       recursive = TRUE)
 
 # F001
 list_doc <- list.files(path = file.path(main_dir, audit_report_list_csv_dir),
-                       full.names = T, 
-                       recursive = T)
+                       full.names = TRUE, 
+                       recursive = TRUE)
 
 list_xml <- list.files(path = file.path(main_dir, audit_report_xml_from_aud),
-                       full.names = T,
-                       recursive = T)
+                       full.names = TRUE,
+                       recursive = TRUE)
 
 value_filter_year_min_xml <- 2015
 value_filter_year_max_xml <- as.numeric(substr(base_date, start = 1, stop = 4))
