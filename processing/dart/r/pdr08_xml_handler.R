@@ -3,20 +3,22 @@
 #################################################
 
 # A001
-list_doc = list.files(path = biz_report_list_csv_dir,
-                      full.names = TRUE)
+list_doc <- list.files(path = file.path(main_dir, biz_report_list_csv_dir),
+                       full.names = TRUE,
+                       recursive = T)
 
-list_xml = list.files(path = biz_report_doc, # 경로명 수정 필요
-                      recursive = TRUE,
-                      full.names = TRUE)
+list_xml <- list.files(path = file.path(main_dir, audit_report_xml_from_biz), # 경로명 수정 필요
+                       full.names = TRUE, 
+                       recursive = T)
 
 # F001
-list_doc <- list.files(path = "C:/Users/Encaion/Documents/06_outsourcing/crawling_woojune/doc_list_F001_codes/",
-                       full.names = TRUE)
+list_doc <- list.files(path = file.path(main_dir, audit_report_list_csv_dir),
+                       full.names = T, 
+                       recursive = T)
 
-list_xml <- list.files(path = "C:/Users/Encaion/Documents/06_outsourcing/crawling_woojune/doc_list_F001_xml_download/",
-                       full.names = TRUE,
-                       recursive = TRUE)
+list_xml <- list.files(path = file.path(main_dir, audit_report_xml_from_aud),
+                       full.names = T,
+                       recursive = T)
 
 value_filter_year_min_xml <- 2015
 value_filter_year_max_xml <- as.numeric(substr(base_date, start = 1, stop = 4))
@@ -24,9 +26,8 @@ value_filter_year_max_xml <- as.numeric(substr(base_date, start = 1, stop = 4))
 df_list_xml <- data.frame(path = list_xml,
                           year = stri_extract(str = list_xml, regex = "(?<=[0-9]/)(19[8-9][0-9]|20[0-2][0-9])"))
 df_list_xml <- df_list_xml[(df_list_xml$year <= value_filter_year_max_xml) & (df_list_xml$year >= value_filter_year_min_xml), ]
-# head(df_list_xml)
 
-corp_list = unlist(unique(stri_extract_all(str = df_list_xml$path, regex = "(?<=corp_no_)[0-9]{6,10}")))
+corp_list <- unlist(unique(stri_extract_all(str = df_list_xml$path, regex = "(?<=corp_code_)[0-9]{6,10}")))
 
 gross_audit_external <- list()
 indv_audit_external <- list()
@@ -34,21 +35,18 @@ indv_audit_external <- list()
 gross_audit_internal <- list()
 indv_audit_internal <- list()
 
-start_corp = 1
-end_corp = length(corp_list)
+start_corp <- 1
+end_corp <- length(corp_list)
 for(n_corp in start_corp:end_corp){
-  # n_corp = 2
-  print(n_corp)
-  df_list_xml_sub = df_list_xml[grep(pattern = paste0("corp_no_", corp_list[n_corp]), df_list_xml$path), ] 
   
-  meta_report_audit_external_corp = list()
-  meta_report_audit_internal_corp = list()
+  print(n_corp)
+  
+  df_list_xml_sub <- df_list_xml[grep(pattern = paste0("corp_code_", corp_list[n_corp]), df_list_xml$path), ] 
   
   for(n_file in 1:nrow(df_list_xml_sub)){
-    # n_file = 1
-    # print(n_file)
+    
     xml_doc <- tryCatch(expr = {
-      read_html(df_list_xml_sub[n_file, "path"], encoding = "CP949")
+      read_html(df_list_xml_sub[n_file, "path"], encoding = "euc-kr")
     }, error = function(x){
       return(read_html(df_list_xml_sub[n_file, "path"], encoding = "UTF-8"))
     })
@@ -114,15 +112,18 @@ for(n_corp in start_corp:end_corp){
     
     df_table_hour <- data.frame(var = table_sub_names,
                                 value = table_sub_data)
+    
     table_hour_etc <- table_sub_comment
     
-    df_corp_info <- read.csv(grep(pattern = corp_code, x = list_doc, value = TRUE))
+    df_corp_info <- read.csv(grep(pattern = corp_code, x = list_doc, value = TRUE), fileEncoding = "EUC-KR")
+    
     df_corp_info[, "rcept_no"] <- as.character(df_corp_info$rcept_no)
     
     recept_no <- stri_extract(str = df_list_xml[n_file, "path"], regex = "(?<=\\/)[0-9]{12,15}")
     doc_loc <- grep(pattern = recept_no, df_corp_info$rcept_no)
     
     fiscal_year <- substr(audit_date_end, start = 1, stop = 4)
+    
     year_end <- substr(audit_date_end, start = 5, stop = 8)
     
     # main audit
@@ -144,11 +145,13 @@ for(n_corp in start_corp:end_corp){
       gsub(pattern = "\\&cr;|\\n", replacement = "") -> table_sub_data
     
     list_table_main_audit <- list(table_sub_data)
-    names(list_table_main_audit[[1]]) = table_sub_names
+    
+    names(list_table_main_audit[[1]]) <- table_sub_names
     
     
     # communication
-    list_table_com = list()
+    list_table_com <- list()
+    
     if(sum(table_list %in% "D-0-2-4-0") == 1){
       xml_doc %>%
         html_nodes(xpath = '//*/title[@aassocnote="D-0-2-4-0"]/..//title') %>%
@@ -173,8 +176,8 @@ for(n_corp in start_corp:end_corp){
       df_table_com <- reshape2::dcast(df_table_com, formula = "obs ~ var", value.var = "value", fill = NA)
       
       for(n_row in 1:nrow(df_table_com)){
-        list_table_com[[n_row]] = as.list(df_table_com[n_row, ])
-        names(list_table_com)[n_row] = n_row
+        list_table_com[[n_row]] <- as.list(df_table_com[n_row, ])
+        names(list_table_com)[n_row] <- n_row
       }
     } else {
       list_table_com <- NA
@@ -219,7 +222,7 @@ for(n_corp in start_corp:end_corp){
     }
     
     
-    df_corp_info <- read.csv(grep(pattern = corp_code, x = list_doc, value = TRUE))
+    df_corp_info <- read.csv(grep(pattern = corp_code, x = list_doc, value = TRUE), fileEncoding = "EUC-KR")
     df_corp_info[, "rcept_no"] <- as.character(df_corp_info$rcept_no)
     
     recept_no <- stri_extract(str = df_list_xml[n_file, "path"], regex = "(?<=\\/)[0-9]{12,15}")
@@ -293,7 +296,7 @@ for(n_corp in start_corp:end_corp){
                                       "등록 공인회계사" = df_table_hour[df_table_hour$var == "TMY_ACR", "value"], 
                                       "수습 공인회계사" = df_table_hour[df_table_hour$var == "TMY_ACP", "value"]))
       
-      prf_time_yearend = c("전산감사 등 전문가" = df_table_hour[df_table_hour$var == "TMY_EXP", "value"], 
+      prf_time_yearend <- c("전산감사 등 전문가" = df_table_hour[df_table_hour$var == "TMY_EXP", "value"], 
                            "수주산업 등 전문가" = NA)
     }
 
@@ -356,7 +359,7 @@ for(n_corp in start_corp:end_corp){
     }
     
     # 보고서
-    internal_audit_report = list("year_end" = year_end, 
+    internal_audit_report <- list("year_end" = year_end, 
                                  "corp_cls" = df_corp_info[1, "corp_cls"], 
                                  "corp_name" = corp_name,
                                  "corp_code" = corp_code, 
@@ -392,11 +395,11 @@ for(n_corp in start_corp:end_corp){
   
   gross_audit_external[[n_corp]] <- indv_audit_external
   names(gross_audit_external)[n_corp] <- corp_code
-  indv_audit_external = list()
+  indv_audit_external <- list()
   
   gross_audit_internal[[n_corp]] <- indv_audit_internal
   names(gross_audit_internal)[n_corp] <- corp_code
-  indv_audit_internal = list()
+  indv_audit_internal <- list()
 }
 
 # [[ write files ]]
