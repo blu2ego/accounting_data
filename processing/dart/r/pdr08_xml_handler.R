@@ -3,30 +3,39 @@
 #################################################
 
 # A001
-list_doc = list.files(path = biz_report_list_csv_dir,
+list_doc <- list.files(path = biz_report_list_csv_dir,
                       full.names = TRUE)
 
-list_xml = list.files(path = biz_report_doc, # 경로명 수정 필요
+list_xml <- list.files(path = biz_report_doc, # 경로명 수정 필요
                       recursive = TRUE,
                       full.names = TRUE)
 
 # F001
-list_doc <- list.files(path = "C:/Users/Encaion/Documents/06_outsourcing/crawling_woojune/doc_list_F001_codes/",
+list_doc <- list.files(path = paste0(main_dir, audit_report_list_csv_dir), 
                        full.names = TRUE)
 
-list_xml <- list.files(path = "C:/Users/Encaion/Documents/06_outsourcing/crawling_woojune/doc_list_F001_xml_download/",
+list_xml <- list.files(path = paste0(main_dir, audit_report_xml_from_aud),
                        full.names = TRUE,
                        recursive = TRUE)
+
+# filtering xml list
+df_list_xml <- data.frame(path = list_xml,
+                          corp_no = unlist(stri_extract_all(str = list_xml, regex = "(?<=corp_no_)[0-9]{6,8}")),
+                          doc_no = unlist(stri_extract_all(str = list_xml, regex = "(?<=[0-9]/)[0-9]{9,14}")))
+df_list_xml[, "year"] <- substr(x = df_list_xml$doc_no, start = 1, stop = 4)
+
+df_list_xml_split <- split(x = df_list_xml, f = df_list_xml$corp_no)
+df_list_xml <- lapply(df_list_xml_split, FUN = "recent_doc")
+df_list_xml <- do.call(what = "rbind", args = df_list_xml)
+
+rownames(df_list_xml) <- NULL
 
 value_filter_year_min_xml <- 2015
 value_filter_year_max_xml <- as.numeric(substr(base_date, start = 1, stop = 4))
 
-df_list_xml <- data.frame(path = list_xml,
-                          year = stri_extract(str = list_xml, regex = "(?<=[0-9]/)(19[8-9][0-9]|20[0-2][0-9])"))
 df_list_xml <- df_list_xml[(df_list_xml$year <= value_filter_year_max_xml) & (df_list_xml$year >= value_filter_year_min_xml), ]
-# head(df_list_xml)
 
-corp_list = unlist(unique(stri_extract_all(str = df_list_xml$path, regex = "(?<=corp_no_)[0-9]{6,10}")))
+corp_list <- unique(df_list_xml$corp_no)
 
 gross_audit_external <- list()
 indv_audit_external <- list()
@@ -39,7 +48,7 @@ end_corp = length(corp_list)
 for(n_corp in start_corp:end_corp){
   # n_corp = 2
   print(n_corp)
-  df_list_xml_sub = df_list_xml[grep(pattern = paste0("corp_no_", corp_list[n_corp]), df_list_xml$path), ] 
+  df_list_xml_sub = df_list_xml[df_list_xml$corp_no == corp_list[n_corp], ] 
   
   meta_report_audit_external_corp = list()
   meta_report_audit_internal_corp = list()
@@ -397,6 +406,8 @@ for(n_corp in start_corp:end_corp){
   gross_audit_internal[[n_corp]] <- indv_audit_internal
   names(gross_audit_internal)[n_corp] <- corp_code
   indv_audit_internal = list()
+  
+  closeAllConnections()
 }
 
 # [[ write files ]]
