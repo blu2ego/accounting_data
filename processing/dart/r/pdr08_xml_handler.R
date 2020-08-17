@@ -3,7 +3,6 @@
 #################################################
 
 # A001
-<<<<<<< HEAD
 list_doc <- list.files(path = biz_report_list_csv_dir,
                       full.names = TRUE)
 
@@ -16,23 +15,7 @@ list_doc <- list.files(path = paste0(main_dir, audit_report_list_csv_dir),
                        full.names = TRUE)
 
 list_xml <- list.files(path = paste0(main_dir, audit_report_xml_from_aud),
-=======
-list_doc <- list.files(path = file.path(main_dir, biz_report_list_csv_dir),
-                       full.names = TRUE,
-                       recursive = TRUE)
-
-list_xml <- list.files(path = file.path(main_dir, audit_report_xml_from_biz), # 경로명 수정 필요
                        full.names = TRUE, 
-                       recursive = TRUE)
-
-# F001
-list_doc <- list.files(path = file.path(main_dir, audit_report_list_csv_dir),
-                       full.names = TRUE, 
-                       recursive = TRUE)
-
-list_xml <- list.files(path = file.path(main_dir, audit_report_xml_from_aud),
->>>>>>> 250bdc193f3e6cf0b56be8c489497a497743c57e
-                       full.names = TRUE,
                        recursive = TRUE)
 
 # filtering xml list
@@ -44,7 +27,6 @@ df_list_xml[, "year"] <- substr(x = df_list_xml$doc_no, start = 1, stop = 4)
 df_list_xml_split <- split(x = df_list_xml, f = df_list_xml$corp_no)
 df_list_xml <- lapply(df_list_xml_split, FUN = "recent_doc")
 df_list_xml <- do.call(what = "rbind", args = df_list_xml)
-
 rownames(df_list_xml) <- NULL
 
 value_filter_year_min_xml <- 2015
@@ -52,11 +34,7 @@ value_filter_year_max_xml <- as.numeric(substr(base_date, start = 1, stop = 4))
 
 df_list_xml <- df_list_xml[(df_list_xml$year <= value_filter_year_max_xml) & (df_list_xml$year >= value_filter_year_min_xml), ]
 
-<<<<<<< HEAD
 corp_list <- unique(df_list_xml$corp_no)
-=======
-corp_list <- unlist(unique(stri_extract_all(str = df_list_xml$path, regex = "(?<=corp_code_)[0-9]{6,10}")))
->>>>>>> 250bdc193f3e6cf0b56be8c489497a497743c57e
 
 gross_audit_external <- list()
 indv_audit_external <- list()
@@ -67,15 +45,9 @@ indv_audit_internal <- list()
 start_corp <- 1
 end_corp <- length(corp_list)
 for(n_corp in start_corp:end_corp){
-  
   print(n_corp)
-<<<<<<< HEAD
   df_list_xml_sub = df_list_xml[df_list_xml$corp_no == corp_list[n_corp], ] 
-=======
->>>>>>> 250bdc193f3e6cf0b56be8c489497a497743c57e
-  
-  df_list_xml_sub <- df_list_xml[grep(pattern = paste0("corp_code_", corp_list[n_corp]), df_list_xml$path), ] 
-  
+
   for(n_file in 1:nrow(df_list_xml_sub)){
     
     xml_doc <- tryCatch(expr = {
@@ -155,9 +127,9 @@ for(n_corp in start_corp:end_corp){
     recept_no <- stri_extract(str = df_list_xml[n_file, "path"], regex = "(?<=\\/)[0-9]{12,15}")
     doc_loc <- grep(pattern = recept_no, df_corp_info$rcept_no)
     
-    fiscal_year <- substr(audit_date_end, start = 1, stop = 4)
+    fiscal_year <- substr(audit_date_end, start = 1, stop = 4)[1]
     
-    year_end <- substr(audit_date_end, start = 5, stop = 8)
+    year_end <- substr(audit_date_end, start = 5, stop = 8)[1]
     
     # main audit
     xml_doc %>%
@@ -372,7 +344,7 @@ for(n_corp in start_corp:end_corp){
       xml_doc_internal[1] %>% 
         html_text() -> xml_doc_report_title
       
-      xml_doc_internal[2:(grep(pattern = "<img", x = xml_doc_internal) - 1)] %>% 
+      xml_doc_internal[2:(grep(pattern = "<img", x = xml_doc_internal)[1] - 1)] %>% 
         as.character() %>% 
         strsplit(split = "\\n|&cr;|cr;|&amp") %>% 
         unlist() -> xml_doc_internal_text 
@@ -425,20 +397,15 @@ for(n_corp in start_corp:end_corp){
     indv_audit_external[[n_file]] <- external_audit
     names(indv_audit_external)[n_file] <- fiscal_year
   }
-  
+  # pos_list = n_corp - start_corp + 1
   gross_audit_external[[n_corp]] <- indv_audit_external
   names(gross_audit_external)[n_corp] <- corp_code
   indv_audit_external <- list()
   
   gross_audit_internal[[n_corp]] <- indv_audit_internal
   names(gross_audit_internal)[n_corp] <- corp_code
-<<<<<<< HEAD
+
   indv_audit_internal = list()
-  
-  closeAllConnections()
-=======
-  indv_audit_internal <- list()
->>>>>>> 250bdc193f3e6cf0b56be8c489497a497743c57e
 }
 
 # [[ write files ]]
