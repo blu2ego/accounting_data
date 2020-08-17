@@ -18,6 +18,8 @@ start_a001 <- 1
 end_a001 <- nrow(corps_code_a001)
 time_delay_a001 <- 5
 
+# init_date에 전체 기업의 전기간 공식 목록을 검색하고, 이후 daily 작업은 Sys.date()로 1일치만 받아서 append
+
 for(n_corps in start_a001:end_a001){
   print(n_corps)
   corp_code_a001 <- sprintf(fmt = "%08d", corps_code_a001[n_corps, "corp_code"])
@@ -35,7 +37,7 @@ for(n_corps in start_a001:end_a001){
   
   report_a001 <- read_html(request_url_a001, encoding = "UTF-8")
   write_xml(report_a001, 
-            paste0(main_dir, biz_report_list_xml_dir, "a001_", corp_code_a001, ".xml"), 
+            paste0(main_dir, biz_report_list_xml_dir, "init_date/a001_", corp_code_a001, ".xml"), 
             encoding = "UTF-8")
   
   Sys.sleep(time_delay_a001 + runif(1) * 2)

@@ -3,7 +3,7 @@
 #####################################################################
 
 # set working directory
-setwd(file.path(main_dir, biz_report_list_xml_dir))
+setwd(file.path(main_dir, biz_report_list_xml_dir, "init_date"))
 
 list_a001s_xml <- list.files()
 
@@ -20,7 +20,7 @@ for(n_a001s in 1:length(list_a001s_xml)){
     if(nrow(list_a001_parsed) >= 1){
       print(n_a001s)
       write.csv(list_a001_parsed, 
-                paste0(main_dir, biz_report_list_csv_dir, "a001_parsed_", list_a001_parsed[1, "corp_code"], ".csv"),
+                paste0(main_dir, biz_report_list_csv_dir, "init_date/a001_parsed_", list_a001_parsed[1, "corp_code"], ".csv"),
                 row.names = FALSE) 
     }
   }

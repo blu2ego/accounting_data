@@ -3,7 +3,7 @@
 #######################################################
 
 # set working directory
-setwd(file.path(main_dir, biz_report_list_csv_dir))
+setwd(file.path(main_dir, biz_report_list_csv_dir, "init_date"))
 
 # importing list of A001 files
 list_a001s_csv <- list.files()
