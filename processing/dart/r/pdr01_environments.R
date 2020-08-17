@@ -17,6 +17,11 @@ xml_child2df <- function(x){
   return(x_df)
 }
 
+recent_doc = function(x){
+  aggregate(data = x, . ~ year, FUN = "max")
+}
+
+
 # A001
 audit_report_parsed_rds_biz  <- file.path("results/dart/audit_report/rds/biz",  base_date, "/")
 audit_report_parsed_json_biz <- file.path("results/dart/audit_report/json/biz", base_date, "/")
