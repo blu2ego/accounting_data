@@ -40,7 +40,7 @@ ifelse(!dir.exists(file.path(main_dir, biz_report_zip)),          dir.create(fil
 ifelse(!dir.exists(file.path(main_dir, biz_report_xml)),          dir.create(file.path(main_dir, biz_report_xml)),          FALSE)
 
 # set additional path and create directories related to f001
-audit_report_list_xml_dir <- file.path("results/dart/audit_report_list/xml/",     base_date, "/")
+audit_report_list_xml_dir <- file.path("results/dart/audit_report_list/xml/")
 audit_report_list_csv_dir <- file.path("results/dart/audit_report_list/csv/")
 audit_report_zip          <- file.path("results/dart/audit_report/zip/",          base_date, "/")
 audit_report_xml_from_biz <- file.path("results/dart/audit_report/xml/from_biz/")
