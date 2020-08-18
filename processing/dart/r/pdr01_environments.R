@@ -18,7 +18,7 @@ xml_child2df <- function(x){
   return(x_df)
 }
 
-recent_doc = function(x){
+recent_doc <- function(x){
   aggregate(data = x, . ~ year, FUN = "max")
 }
 
