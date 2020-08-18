@@ -47,10 +47,9 @@ indv_audit_internal <- list()
 start_corp <- 1
 end_corp <- length(corp_list)
 for(n_corp in start_corp:end_corp){
-  
   print(n_corp)
 
-  df_list_xml_sub <- df_list_xml[df_list_xml$corp_no == corp_list[n_corp], ] 
+  df_list_xml_sub = df_list_xml[df_list_xml$corp_no == corp_list[n_corp], ] 
 
   for(n_file in 1:nrow(df_list_xml_sub)){
     
@@ -131,9 +130,9 @@ for(n_corp in start_corp:end_corp){
     recept_no <- stri_extract(str = df_list_xml[n_file, "path"], regex = "(?<=\\/)[0-9]{12,15}")
     doc_loc <- grep(pattern = recept_no, df_corp_info$rcept_no)
     
-    fiscal_year <- substr(audit_date_end, start = 1, stop = 4)
+    fiscal_year <- substr(audit_date_end, start = 1, stop = 4)[1]
     
-    year_end <- substr(audit_date_end, start = 5, stop = 8)
+    year_end <- substr(audit_date_end, start = 5, stop = 8)[1]
     
     # main audit
     xml_doc %>%
@@ -306,7 +305,7 @@ for(n_corp in start_corp:end_corp){
                                       "수습 공인회계사" = df_table_hour[df_table_hour$var == "TMY_ACP", "value"]))
       
       prf_time_yearend <- c("전산감사 등 전문가" = df_table_hour[df_table_hour$var == "TMY_EXP", "value"], 
-                           "수주산업 등 전문가" = NA)
+                            "수주산업 등 전문가" = NA)
     }
 
     # auditors <- c(quality_ctrl, cpa, prf)
@@ -348,7 +347,7 @@ for(n_corp in start_corp:end_corp){
       xml_doc_internal[1] %>% 
         html_text() -> xml_doc_report_title
       
-      xml_doc_internal[2:(grep(pattern = "<img", x = xml_doc_internal) - 1)] %>% 
+      xml_doc_internal[2:(grep(pattern = "<img", x = xml_doc_internal)[1] - 1)] %>% 
         as.character() %>% 
         strsplit(split = "\\n|&cr;|cr;|&amp") %>% 
         unlist() -> xml_doc_internal_text 
@@ -401,7 +400,7 @@ for(n_corp in start_corp:end_corp){
     indv_audit_external[[n_file]] <- external_audit
     names(indv_audit_external)[n_file] <- fiscal_year
   }
-  
+  # pos_list = n_corp - start_corp + 1
   gross_audit_external[[n_corp]] <- indv_audit_external
   names(gross_audit_external)[n_corp] <- corp_code
   indv_audit_external <- list()
@@ -409,7 +408,8 @@ for(n_corp in start_corp:end_corp){
   gross_audit_internal[[n_corp]] <- indv_audit_internal
   names(gross_audit_internal)[n_corp] <- corp_code
 
-  indv_audit_internal <- list()
+  indv_audit_internal = list()
+
 }
 
 # [[ write files ]]
