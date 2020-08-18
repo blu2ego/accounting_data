@@ -22,11 +22,11 @@ list_xml <- list.files(path = file.path(main_dir, audit_report_xml_from_aud),
 
 # filtering xml list
 df_list_xml <- data.frame(path = list_xml,
-                          corp_no = unlist(stri_extract_all(str = list_xml, regex = "(?<=corp_no_)[0-9]{6,8}")),
+                          corp_code = unlist(stri_extract_all(str = list_xml, regex = "(?<=corp_code_)[0-9]{6,8}")),
                           doc_no = unlist(stri_extract_all(str = list_xml, regex = "(?<=[0-9]/)[0-9]{9,14}")))
 df_list_xml[, "year"] <- substr(x = df_list_xml$doc_no, start = 1, stop = 4)
 
-df_list_xml_split <- split(x = df_list_xml, f = df_list_xml$corp_no)
+df_list_xml_split <- split(x = df_list_xml, f = df_list_xml$corp_code)
 df_list_xml <- lapply(df_list_xml_split, FUN = "recent_doc")
 df_list_xml <- do.call(what = "rbind", args = df_list_xml)
 rownames(df_list_xml) <- NULL
@@ -36,7 +36,7 @@ value_filter_year_max_xml <- as.numeric(substr(base_date, start = 1, stop = 4))
 
 df_list_xml <- df_list_xml[(df_list_xml$year <= value_filter_year_max_xml) & (df_list_xml$year >= value_filter_year_min_xml), ]
 
-corp_list <- unique(df_list_xml$corp_no)
+corp_list <- unique(df_list_xml$corp_code)
 
 gross_audit_external <- list()
 indv_audit_external <- list()
@@ -49,7 +49,7 @@ end_corp <- length(corp_list)
 for(n_corp in start_corp:end_corp){
   print(n_corp)
 
-  df_list_xml_sub <- df_list_xml[df_list_xml$corp_no == corp_list[n_corp], ] 
+  df_list_xml_sub <- df_list_xml[df_list_xml$corp_code == corp_list[n_corp], ] 
 
   for(n_file in 1:nrow(df_list_xml_sub)){
     
