@@ -49,7 +49,7 @@ end_corp <- length(corp_list)
 for(n_corp in start_corp:end_corp){
   print(n_corp)
 
-  df_list_xml_sub = df_list_xml[df_list_xml$corp_no == corp_list[n_corp], ] 
+  df_list_xml_sub <- df_list_xml[df_list_xml$corp_no == corp_list[n_corp], ] 
 
   for(n_file in 1:nrow(df_list_xml_sub)){
     
@@ -311,6 +311,7 @@ for(n_corp in start_corp:end_corp){
     # auditors <- c(quality_ctrl, cpa, prf)
     # auditors_time_periodic <- c(quality_ctrl_time_periodic, cpa_time_periodic, prf_time_periodic)
     # auditors_time_yearend <- c(quality_ctrl_time_yearend, cpa_time_yearend, prf_time_yearend)
+    
     auditors <- as.pairlist(c(quality_ctrl, cpa, prf))
     auditors_time_periodic <- as.pairlist(c(quality_ctrl_time_periodic, cpa_time_periodic, prf_time_periodic))
     auditors_time_yearend <- as.pairlist(c(quality_ctrl_time_yearend, cpa_time_yearend, prf_time_yearend))
@@ -400,6 +401,7 @@ for(n_corp in start_corp:end_corp){
     indv_audit_external[[n_file]] <- external_audit
     names(indv_audit_external)[n_file] <- fiscal_year
   }
+  
   # pos_list = n_corp - start_corp + 1
   gross_audit_external[[n_corp]] <- indv_audit_external
   names(gross_audit_external)[n_corp] <- corp_code
@@ -408,7 +410,7 @@ for(n_corp in start_corp:end_corp){
   gross_audit_internal[[n_corp]] <- indv_audit_internal
   names(gross_audit_internal)[n_corp] <- corp_code
 
-  indv_audit_internal = list()
+  indv_audit_internal <- list()
 
 }
 
