@@ -46,6 +46,10 @@ indv_audit_internal <- list()
 
 start_corp <- 1
 end_corp <- length(corp_list)
+
+start_corp <- 4939
+end_corp <- length(corp_list)
+
 for(n_corp in start_corp:end_corp){
   print(n_corp)
 
@@ -54,7 +58,7 @@ for(n_corp in start_corp:end_corp){
   for(n_file in 1:nrow(df_list_xml_sub)){
     
     xml_doc <- tryCatch(expr = {
-      read_html(df_list_xml_sub[n_file, "path"], encoding = "euc-kr")
+      read_html(df_list_xml_sub[n_file, "path"], encoding = "CP949")
     }, error = function(x){
       return(read_html(df_list_xml_sub[n_file, "path"], encoding = "UTF-8"))
     })
@@ -123,7 +127,7 @@ for(n_corp in start_corp:end_corp){
     
     table_hour_etc <- table_sub_comment
     
-    df_corp_info <- read.csv(grep(pattern = corp_code, x = list_doc, value = TRUE), fileEncoding = "EUC-KR")
+    df_corp_info <- read.csv(grep(pattern = corp_code, x = list_doc, value = TRUE), fileEncoding = "CP949")
     
     df_corp_info[, "rcept_no"] <- as.character(df_corp_info$rcept_no)
     
@@ -230,7 +234,7 @@ for(n_corp in start_corp:end_corp){
     }
     
     
-    df_corp_info <- read.csv(grep(pattern = corp_code, x = list_doc, value = TRUE), fileEncoding = "EUC-KR")
+    df_corp_info <- read.csv(grep(pattern = corp_code, x = list_doc, value = TRUE), fileEncoding = "CP949")
     df_corp_info[, "rcept_no"] <- as.character(df_corp_info$rcept_no)
     
     recept_no <- stri_extract(str = df_list_xml[n_file, "path"], regex = "(?<=\\/)[0-9]{12,15}")
@@ -416,7 +420,7 @@ for(n_corp in start_corp:end_corp){
 
 # [[ write files ]]
 # json
-dir_path_json <- file.path(main_dir, audit_report_parsed_json_aud)
+dir_path_json <- file.path(main_dir, audit_report_parsed_json_biz)
 dir.create(path = dir_path_json, showWarnings = FALSE, recursive = TRUE)
 
 # json - external

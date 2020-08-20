@@ -25,7 +25,7 @@ recent_doc <- function(x){
 
 # A001
 audit_report_parsed_rds_biz  <- file.path("results/dart/for_accounting/rds/from_biz",  base_date, "/")
-audit_report_parsed_json_biz <- file.path("results/dart/for_accounting/json/from_biz", base_date, "/")
+audit_report_parsed_json_biz <- file.path("results/dart/for_accounting/json/from_biz")
 
 ifelse(!dir.exists(file.path(main_dir, audit_report_parsed_rds_biz)), dir.create(file.path(main_dir, audit_report_parsed_rds_biz)), FALSE)
 ifelse(!dir.exists(file.path(main_dir, audit_report_parsed_json_biz)), dir.create(file.path(main_dir, audit_report_parsed_json_biz)), FALSE)

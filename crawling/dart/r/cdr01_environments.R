@@ -1,6 +1,6 @@
-###############################################
+################################################
 ## /ward/crawling/dart/r/cdr01_environments.R ##
-###############################################
+################################################
 
 # Setting Global Environments
 
@@ -19,7 +19,7 @@ base_date <- Sys.Date()
 # set main path
 main_dir <- "~/projects/ward/"
 
-# set addtional path and create directories related to corp_code
+# set additional path and create directories related to corp_code
 corps_code_zip_dir        <- "results/dart/corps_code/zip/"
 corps_code_unzip_dir      <- "results/dart/corps_code/xml/"
 corps_code_parsed_csv_dir <- "results/dart/corps_code/csv/"
