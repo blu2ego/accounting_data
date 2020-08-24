@@ -242,17 +242,17 @@ for(n_corp in start_corp:end_corp){
         html_nodes(xpath = '//*/title[@aassocnote="D-0-2-4-0"]/..//tbody') -> table_sub
       
       table_sub %>%
-        html_nodes(css = "te") %>% 
-        html_attr(name = "acode") -> table_sub_names
+        html_nodes(xpath = "tr/te|tr/tu") %>% 
+        html_attr(name = "acode") %>% 
+        ifelse(test = is.na(.), yes = "COMM_DATE", no = .) -> table_sub_names
       
       table_sub %>%
-        html_nodes(css = "te") %>% 
+        html_nodes(xpath = "tr/te|tr/tu") %>% 
         html_text() %>%
         gsub(pattern = "\\&cr;", replacement = ", ") -> table_sub_data
       
-    # df_table_com <- data.frame(var = table_sub_names, value = table_sub_data)
-      df_table_com <- data.frame(var = c("일자", "참석자", "방식", "주요 논의 내용"), value = table_sub_data)
-      df_table_com[, "회차"] <- rep(1:(nrow(df_table_com)/4), each = 4)
+      df_table_com <- data.frame(var = table_sub_names, value = table_sub_data)
+      df_table_com[, "회차"] <- rep(1:(nrow(df_table_com)/5), each = 5)
       df_table_com <- reshape2::dcast(df_table_com, formula = "회차 ~ var", value.var = "value", fill = NA)
       
       for(n_row in 1:nrow(df_table_com)){
