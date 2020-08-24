@@ -171,9 +171,9 @@ for(n_corp in start_corp:end_corp){
     xml_doc %>%
       html_nodes(xpath = '//*/title[@aassocnote="D-0-2-2-0"]/..//tbody') -> table_sub
     
-    table_sub[1] %>%
-      html_text() %>% 
-      gsub(pattern = "\n", replacement = "") -> table_sub_comment
+    # table_sub[1] %>%
+    #   html_text() %>% 
+    #   gsub(pattern = "\n", replacement = "") -> table_sub_comment
     
     table_sub[2] %>%
       html_nodes(css = "te") %>% 
@@ -187,7 +187,6 @@ for(n_corp in start_corp:end_corp){
       as.numeric() -> table_sub_data
 
     df_table_hour <- data.frame(var = table_sub_names, value = table_sub_data)
-  # table_hour_etc <- table_sub_comment <- 이건 왜?
     
 
 ##### audit opinion for financial statements #####
