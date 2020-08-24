@@ -189,6 +189,35 @@ for(n_corp in start_corp:end_corp){
     df_table_hour <- data.frame(var = table_sub_names, value = table_sub_data)
 
     
+##### main audit #####
+    xml_doc %>%
+      html_nodes(xpath = '//*/title[@aassocnote="D-0-2-3-0"]/..//title') %>%
+      html_text() -> table_name
+    
+    xml_doc %>%
+      html_nodes(xpath = '//*/title[@aassocnote="D-0-2-3-0"]/..//tbody') -> table_sub
+    
+    table_sub %>%
+      html_nodes(css = "te") %>% 
+      html_attr(name = "acode") -> table_sub_names
+    
+    names_loc = grep(pattern = "^PLC", table_sub_names)
+    names_cnt = length(names_loc) / 5
+    table_sub_names[names_loc] = paste(table_sub_names[names_loc],
+                                       rep(1:names_cnt, each = 5),
+                                       sep = "_")
+    
+    table_sub %>%
+      html_nodes(css = "te") %>% 
+      html_text() %>% 
+      ifelse(test = . == "-", yes = NA, no = .) %>%
+      gsub(pattern = "\\&cr;|\\n", replacement = " ") %>% 
+      gsub(pattern = "^ | $| {2,}", replacement = "") -> table_sub_data
+    
+    list_table_main_audit <- list(table_sub_data)
+    names(list_table_main_audit[[1]]) <- table_sub_names
+    
+    
 ##### audit opinion for financial statements #####
     if(sum(table_list %in% "D-0-0-1-0") == 1){
       xml_doc %>% 
@@ -363,6 +392,7 @@ for(n_corp in start_corp:end_corp){
                              list("투입 인원수" = auditors, 
                                   "분/반기검토(시간)" = auditors_time_periodic,
                                   "감사(시간)" = auditors_time_yearend),
+                           "주요 감사실시내용" = as.list(list_table_main_audit[[1]]),
                            "감사와의 커뮤니케이션" = list_table_com)
     
     indv_audit_external_from_aud[[n_file]] <- external_audit
