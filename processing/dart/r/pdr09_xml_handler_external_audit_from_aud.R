@@ -402,7 +402,6 @@ for(n_corp in start_corp:end_corp){
   gross_audit_external_from_aud[[n_corp]] <- indv_audit_external_from_aud
   names(gross_audit_external_from_aud)[n_corp] <- corp_code
   indv_audit_external_from_aud <- list()
-  closeAllConnections()
 }
 
 
