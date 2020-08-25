@@ -2,17 +2,18 @@
 import pandas as pd
 import os
 import zipfile
+import glob
 
 # A001
-audit_report_parsed_rds_biz  = "results/dart/audit_report/rds/biz/"  + base_date + "/"
-audit_report_parsed_json_biz = "results/dart/audit_report/json/biz/" + base_date + "/"
+audit_report_rds_biz  = "results/dart/for_accounting/rds/from_biz/"
+audit_report_json_biz = "results/dart/for_accounting/json/from_biz/"
 
-dir_maker(main_dir + audit_report_parsed_rds_biz)
-dir_maker(main_dir + audit_report_parsed_json_biz)
+dir_maker(main_dir + audit_report_rds_biz)
+dir_maker(main_dir + audit_report_json_biz)
 
 # F001
-audit_report_parsed_rds_aud  = "results/dart/audit_report/rds/aud/"  + base_date + "/"
-audit_report_parsed_json_aud = "results/dart/audit_report/json/aud/" + base_date + "/"
+audit_report_rds_aud  = "results/dart/for_accounting/rds/from_aud/"
+audit_report_json_aud = "results/dart/for_accounting/json/from_aud/"
 
-dir_maker(main_dir + audit_report_parsed_rds_aud)
-dir_maker(main_dir + audit_report_parsed_json_aud)
+dir_maker(main_dir + audit_report_rds_aud)
+dir_maker(main_dir + audit_report_json_aud)
