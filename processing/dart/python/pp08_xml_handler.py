@@ -17,6 +17,9 @@ df_list_xml = pd.DataFrame({"path": list_xml,
                             "doc_no": list_xml.str.extract(pat = "([0-9]{12,16})_007")[0]})
 df_list_xml["year"] = df_list_xml["doc_no"].str.slice(start = 0, stop = 4)
 
+df_list_xml["corp_code"] = df_list_xml["corp_code"].astype("int")
+df_list_xml["year"     ] = df_list_xml["year"     ].astype("int")
+
 value_filter_year_min_xml = 2015
 value_filter_year_max_xml = 2020
 
