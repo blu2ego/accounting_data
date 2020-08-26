@@ -3,6 +3,7 @@
 
 # loading required libraries
 from bs4 import BeautifulSoup
+import re
 
 file_path_a001_doc = "doc_list_A001_codes"
 list_doc = glob.glob(file_path_a001_doc + "/*.csv", recursive = True)
@@ -50,14 +51,26 @@ doc_title = xml_doc.find("document-name").text
 tables = xml_doc.find_all("title", {"aassocnote": True})
 table_list = [tab["aassocnote"] for tab in tables]
 
-# # audit hour table
 # xml_doc %>%
-#   html_nodes(xpath = '//*/title[@aassocnote="D-0-2-2-0"]/..//title') %>%
-#   html_text() -> table_name
-# 
-# xml_doc %>%
-#   html_nodes(xpath = '//*/title[@aassocnote="D-0-2-2-0"]/..//tbody') -> table_sub
-# 
-# table_sub[1] %>%
+#   html_nodes(xpath = '//*/tu[@aunit="SUB_PERIODTO"]|//*/tu[@aunit="PERIODTO2"]') %>% 
 #   html_text() %>% 
-#   gsub(pattern = "\n", replacement = "") -> table_sub_comment
+#   gsub(pattern = "[^0-9]", replacement = "") -> audit_date_end
+# 
+# xml_doc %>% 
+#   html_nodes(xpath = '//*/td[@usermark="F-BT14"]') %>% 
+#   .[1] %>% 
+#   html_text() %>% 
+#   gsub(pattern = "\\n", replacement = "") -> doc_turn
+
+
+# audit hour table
+table_sub = xml_doc.find("title", {"aassocnote": "D-0-2-2-0"}).find_parent()
+table_name = table_sub.find("title").text
+
+table_sub_names = [tag["acode"] for tag in table_sub.findAll("te")]
+table_sub_data = [re.sub(pattern = "[^0-9]", repl = "", string = tag.text) for tag in table_sub.findAll("te")]
+
+df_table_hour = pd.DataFrame({"var": table_sub_names,
+                              "value": table_sub_data})
+ 
+df_table_hour["value"] = np_where(df_table_hour["value"] == "", pd.NA, df_table_hour["value"])
