@@ -74,3 +74,18 @@ df_table_hour = pd.DataFrame({"var": table_sub_names,
                               "value": table_sub_data})
  
 df_table_hour["value"] = np_where(df_table_hour["value"] == "", pd.NA, df_table_hour["value"])
+df_table_hour
+
+# df_corp_info <- read.csv(grep(pattern = corp_code, x = list_doc, value = TRUE), fileEncoding = "CP949")
+# 
+# df_corp_info[, "rcept_no"] <- as.character(df_corp_info$rcept_no)
+
+# internal opinion
+xml_doc_report = xml_doc.find("title", {"aassocnote": "D-0-0-1-0"}).find_parent().findChildren()
+xml_doc_report_title = xml_doc_report[0].text
+
+aa = [str(doc_line) for doc_line in xml_doc_report[8:]]
+aa = [re.sub(pattern = "usermark=\" B\">", repl = "usermark=\" B\">@", string = doc_line) for doc_line in aa]
+aa = [re.sub(pattern = "<.*?>|\\n|&cr;|cr;|&amp", repl = "", string = doc_line) for doc_line in aa]
+aa = [re.sub(pattern = ";", repl = "", string = doc_line) for doc_line in aa]
+[doc_line for doc_line in aa if doc_line not in ["", "@", " "]]
