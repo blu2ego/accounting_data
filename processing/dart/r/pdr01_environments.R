@@ -24,15 +24,15 @@ recent_doc <- function(x){
 
 
 # A001
-audit_report_rds_biz  <- file.path("results/dart/for_accounting/rds/from_biz/")
-audit_report_json_biz <- file.path("results/dart/for_accounting/json/from_biz/")
+audit_report_rds_from_biz  <- file.path("results/dart/for_accounting/rds/from_biz/")
+audit_report_json_from_biz <- file.path("results/dart/for_accounting/json/from_biz/")
 
 ifelse(!dir.exists(file.path(main_dir, audit_report_parsed_rds_biz)), dir.create(file.path(main_dir, audit_report_parsed_rds_biz)), FALSE)
 ifelse(!dir.exists(file.path(main_dir, audit_report_parsed_json_biz)), dir.create(file.path(main_dir, audit_report_parsed_json_biz)), FALSE)
 
 # F001
-audit_report_rds_aud  <- file.path("results/dart/for_accounting/rds/from_aud/")
-audit_report_json_aud <- file.path("results/dart/for_accounting/json/from_aud/")
+audit_report_rds_from_aud  <- file.path("results/dart/for_accounting/rds/from_aud/")
+audit_report_json_from_aud <- file.path("results/dart/for_accounting/json/from_aud/")
 
 ifelse(!dir.exists(file.path(main_dir, audit_report_rds_aud)), dir.create(file.path(main_dir, audit_report_rds_aud)), FALSE)
 ifelse(!dir.exists(file.path(main_dir, audit_report_parsed_json_aud)), dir.create(file.path(main_dir, audit_report_parsed_json_aud)), FALSE)

@@ -160,7 +160,7 @@ for(n_corp in start_corp:end_corp){
 }
 
 #### write for rds #####
-saveRDS(gross_audit_internal_from_biz, file = paste0(main_dir, audit_report_rds_biz, "internal_audit_biz.rds"))
+saveRDS(gross_audit_internal_from_biz, file = paste0(main_dir, audit_report_from_rds_biz, "internal_audit_from_biz.rds"))
 
 ##### write for json #####
 gross_audit_internal_json <- jsonlite::toJSON(gross_audit_internal_from_biz, pretty = TRUE, auto_unbox = TRUE, encoding = "UTF-8")

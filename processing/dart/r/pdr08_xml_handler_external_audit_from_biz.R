@@ -406,7 +406,7 @@ for(n_corp in start_corp:end_corp){
 
 
 #### write for rds #####
-saveRDS(gross_audit_external_from_biz, file = paste0(main_dir, audit_report_rds_biz, "external_audit_biz.rds"))
+saveRDS(gross_audit_external_from_biz, file = paste0(main_dir, audit_report_rds_from_biz, "external_audit_from_biz.rds"))
 
 
 ##### write for json #####
