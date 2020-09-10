@@ -55,3 +55,8 @@ ifelse(!dir.exists(file.path(main_dir, audit_report_xml_from_biz)), dir.create(f
 ifelse(!dir.exists(file.path(main_dir, audit_report_xml_from_aud)), dir.create(file.path(main_dir, audit_report_xml_from_aud)), FALSE)
 ifelse(!dir.exists(file.path(main_dir, audit_report_pdf_from_biz)), dir.create(file.path(main_dir, audit_report_pdf_from_biz)), FALSE)
 ifelse(!dir.exists(file.path(main_dir, audit_report_pdf_from_aud)), dir.create(file.path(main_dir, audit_report_pdf_from_aud)), FALSE)
+
+
+# set path and create directories related to O001
+operation_report_pdf_from_biz <- file.path("results/dart/opeation_report/")
+ifelse(!dir.exists(file.path(main_dir, operation_report_pdf_from_biz)), dir.create(file.path(main_dir, operation_report_pdf_from_biz)), FALSE)
