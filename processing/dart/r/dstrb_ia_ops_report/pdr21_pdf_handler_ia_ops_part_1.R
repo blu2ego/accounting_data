@@ -1,4 +1,4 @@
-setwd("/home/woojune/projects/ward/results/dart/ia_ops_reports/ia_ops_reports_part_1/")
+setwd("/home/woojune/projects/ward-data/results/dart/ia_ops_reports/ia_ops_reports_part_1/")
 
 library(tabulizer)
 library(stringi)
