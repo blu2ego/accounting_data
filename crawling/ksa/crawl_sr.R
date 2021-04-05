@@ -49,11 +49,13 @@ while(flag_next){
                         value = last_subpage_xpath)$clickElement()  
       
       # compose sub page 
-      sub_page_xpath <- tryCatch(paste0("/html/body/div/div[3]/div/div[3]/div[2]/article/div/form/div/div/ul/li[", 1, "]/a")) 
+      sub_page_xpath <- tryCatch(paste0("/html/body/div/div[3]/div/div[3]/div[2]/article/div/form/div/div/ul/li[", j, "]/a")) 
       
       # select sub page
-      tryCatch(remDr$findElement(using = "xpath",
-                                 value = sub_page_xpath)$clickElement()) 
+      tryCatch(
+        remDr$findElement(using = "xpath", value = sub_page_xpath)$clickElement(),
+        error = print(j, i)
+        )
       
       page_parse <- remDr$getPageSource()[[1]]
       
@@ -90,9 +92,16 @@ while(flag_next){
         download.file(download_url, destfile = 
                         paste0("D://ksi/", dest_file_name))
       }
-      
-      remDr$findElement(using = "css selector", value = "._next")$clickElement()
     } 
+    # page_parse <- remDr$getPageSource()[[1]]
+    
+    # page_html <- page_parse %>% 
+    #   read_html()
+    
+    # flag_next <- html_nodes(page_html, "._inner") %>% 
+    #  html_elements("._next")
+    
+    remDr$findElement(using = "css selector", value = "._next")$clickElement()
   } else {
  
     for(j in 1:length(li)) {
