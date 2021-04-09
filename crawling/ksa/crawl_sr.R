@@ -21,10 +21,11 @@ while(flag_next){
   page_html <- page_parse %>% read_html()
   flag_next <- html_nodes(page_html, "._inner") %>% html_elements("._next")
   
-  if(length(flag_next) == 1){ # there exist next burton
+  if(length(flag_next) == 1) { # there exist next burton
+    
     page_parse <- remDr$getPageSource()[[1]]
     page_html <- page_parse %>% read_html()
-
+    
     # parsing table
     Sys.setlocale('LC_ALL', 'English')
     table <- page_html %>% html_table() %>% data.frame()
@@ -42,9 +43,10 @@ while(flag_next){
     # download pdf files from one table
     for(i in 1:length(download_links)){
       cnt <- cnt + 1
+      Sys.sleep(5)
       download_url <- paste0(base_url, download_links[i])
       dest_file_name <- paste0(table[i, 1], "_", pbls_year[i], ".pdf")
-      download.file(download_url, destfile = paste0("D://ksi/", dest_file_name))
+      download.file(download_url, destfile = paste0("C://ksi/", dest_file_name))
     }
     
     li <- html_nodes(page_html, "._inner") %>% html_elements("li")
@@ -76,12 +78,17 @@ while(flag_next){
       # download pdf files from one table
       for(k in 1:length(download_links)){
         cnt <- cnt + 1
+        Sys.sleep(5)
         download_url <- paste0(base_url, download_links[k])
         dest_file_name <- paste0(table[k, 1], "_", pbls_year[k], ".pdf")
-        download.file(download_url, destfile = paste0("D://ksi/", dest_file_name))
+        download.file(download_url, destfile = paste0("C://ksi/", dest_file_name))
       }
     } 
+    
     remDr$findElement(using = "css selector", value = "._next")$clickElement()
+    
+    flag_next <- TRUE
+    
   } else {
     page_parse <- remDr$getPageSource()[[1]]
     page_html <- page_parse %>% read_html()
@@ -103,9 +110,10 @@ while(flag_next){
     # download pdf files from one table
     for(i in 1:length(download_links)){
       cnt <- cnt + 1
+      Sys.sleep(5)
       download_url <- paste0(base_url, download_links[i])
       dest_file_name <- paste0(table[i, 1], "_", pbls_year[i], ".pdf")
-      download.file(download_url, destfile = paste0("D://ksi/", dest_file_name))
+      download.file(download_url, destfile = paste0("C://ksi/", dest_file_name))
     }
     
     li <- html_nodes(page_html, "._inner") %>% html_elements("li")
@@ -137,9 +145,10 @@ while(flag_next){
       # download pdf files from one table
       for(k in 1:length(download_links)){
         cnt <- cnt + 1
+        Sys.sleep(5)
         download_url <- paste0(base_url, download_links[k])
         dest_file_name <- paste0(table[k, 1], "_", pbls_year[k], ".pdf")
-        download.file(download_url, destfile = paste0("D://ksi/", dest_file_name))
+        download.file(download_url, destfile = paste0("C://ksi/", dest_file_name))
       }
     }
     flag_next <- FALSE
