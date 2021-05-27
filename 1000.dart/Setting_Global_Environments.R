@@ -27,6 +27,16 @@ ifelse(!dir.exists(file.path(data_dir, corps_code_zip_dir)),        dir.create(f
 ifelse(!dir.exists(file.path(data_dir, corps_code_unzip_dir)),      dir.create(file.path(data_dir, corps_code_unzip_dir)),      FALSE)
 ifelse(!dir.exists(file.path(data_dir, corps_code_parsed_csv_dir)), dir.create(file.path(data_dir, corps_code_parsed_csv_dir)), FALSE)
 
+# I001
+filing_I001_dir <- "/dart/filings/I001/"
+filing_I001_xml_dir <- "/dart/filings/I001/xml/"
+filing_I001_csv_dir <- "/dart/filings/I001/csv/"
+
+ifelse(!dir.exists(file.path(data_dir, filing_I001_dir)), dir.create(file.path(data_dir, filing_I001_dir)), FALSE)
+ifelse(!dir.exists(file.path(data_dir, filing_I001_xml_dir)), dir.create(file.path(data_dir, filing_I001_xml_dir)), FALSE)
+ifelse(!dir.exists(file.path(data_dir, filing_I001_csv_dir)), dir.create(file.path(data_dir, filing_I001_csv_dir)), FALSE)
+
+
 # set additional path and create directories related to a001
 biz_report_list_xml_dir <- file.path("~/data2/ward_data/results/dart/biz_report_list/xml/")
 biz_report_list_csv_dir <- file.path("~/data2/ward_data/results/dart/biz_report_list/csv/")
@@ -69,6 +79,10 @@ audit_report_json_from_aud <- file.path("results/dart/for_accounting/json/from_a
 ifelse(!dir.exists(file.path(main_dir, audit_report_rds_aud)), dir.create(file.path(main_dir, audit_report_rds_aud)), FALSE)
 ifelse(!dir.exists(file.path(main_dir, audit_report_parsed_json_aud)), dir.create(file.path(main_dir, audit_report_parsed_json_aud)), FALSE)
 
+
+ifelse(!dir.exists(file.path(main_dir, audit_report_rds_aud)), dir.create(file.path(main_dir, audit_report_rds_aud)), FALSE)
+ifelse(!dir.exists(file.path(main_dir, audit_report_parsed_json_aud)), dir.create(file.path(main_dir, audit_report_parsed_json_aud)), FALSE)
+
 # set path and create directories related to O001
 operation_report_pdf_from_biz <- file.path("~/data2/ward_data/results/dart/opeation_report/")
 ifelse(!dir.exists(file.path(main_dir, operation_report_pdf_from_biz)), dir.create(file.path(main_dir, operation_report_pdf_from_biz)), FALSE)
@@ -76,9 +90,8 @@ ifelse(!dir.exists(file.path(main_dir, operation_report_pdf_from_biz)), dir.crea
 # creating xml_child2df function to import and process xml
 xml_child2df <- function(x){
   x_child <- html_children(x)
-  x_df <- as.data.frame(matrix(html_text(x_child), 
-                               byrow = TRUE, 
-                               nrow = 1))
+  x_df <- data.frame(matrix(html_text(x_child), byrow = TRUE, nrow = 1))
   colnames(x_df) <- html_name(x_child)
   return(x_df)
 }
+

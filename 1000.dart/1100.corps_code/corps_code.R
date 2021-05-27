@@ -24,14 +24,13 @@ download.file(url = request_url_corps_code,
 # set working directory
 setwd(file.path(data_dir, corps_code_zip_dir))
 
-file_name       <- paste0("corps_code_", base_date, ".zip")
-file_name_unzip <- paste0("corps_code_", base_date, ".xml")
-
 # unzip
+file_name <- "corps_codezip"
 unzip(zipfile = file_name, exdir = file.path(data_dir, corps_code_unzip_dir))
 
 # set working directory
 setwd(file.path(data_dir, corps_code_unzip_dir))
+file_name_unzip <- "corps_code.xml"
 file.rename("CORPCODE.xml", to = file_name_unzip)
 
 ###########################################################
@@ -43,10 +42,6 @@ read_xml(file_name_unzip) %>%
   lapply("xml_child2df") %>%
   do.call(what = "rbind") -> corps_code
 
-file_name_parsed <- paste0("corps_code_parsed_", base_date, ".csv")
-
 write.csv(x = corps_code, 
-          file = file.path(data_dir, corps_code_parsed_csv_dir, file_name_parsed), 
+          file = "~/data2/ward_data/results/dart/corps_code/csv/corps_code.csv", 
           row.names = FALSE)
-
-
