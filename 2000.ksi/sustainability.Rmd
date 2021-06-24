@@ -1,0 +1,140 @@
+---
+title: "지속가능보고서 크롤링"
+output: html_document
+author: "정우준""
+data: "2021 03 07""
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 지속가능보고서
+
+한국표준협회에서 ISO 26000에 기반한 대한민국지속가능성지수(Korean Sustainability Index)를 산출하여 발표하고 있다(<https://www.ksa.or.kr/ksi/index.do>). 여기에서는 한글과 영문의 지속가능성 보고서 DB도 구축하여 제공하고 있다(<https://www.ksa.or.kr/ksi/4982/subview.do>).이 문서의 목적은 위에서 제공되는 지속가능보고서를 크롤링하는 방법을 제공하는 것이다.
+
+![](sustainability/ksi_db.png)
+
+```{bash}
+cd C:\selenium
+java -Dwebdriver.gecko.driver="geckodriver.exe" -jar selenium-server-standalone-3.141.59.jar -port 4445
+```
+
+![](C:/Users/nabataea/AppData/Local/RStudio/tmp/paste-E0CF5650.png)
+
+## Java 사용을 위한 환경변수 설정
+
+```{r}
+Sys.setenv(JAVA_HOME='C:/Program Files/Java/jre1.8.0_281')
+```
+
+## 필요한 패키지 로딩
+
+```{r}
+library(RSelenium)
+library(rvest)
+library(httr)
+```
+
+## 브라우저(chrome) 시동
+
+```{r}
+remDr <- remoteDriver(
+  remoteServerAddr="localhost",
+  port=4445L,
+  browserName="chrome")
+
+remDr$open()
+```
+
+```{r}
+remDr$navigate("https://www.ksa.or.kr/ksi/4982/subview.do")
+
+remDr$findElement(using = "xpath",
+                  value ="/html/body/div/div[3]/div/div[3]/div[2]/article/div/div[2]/form/div/ul/li[1]/a")$clickElement()
+
+page_parse <- remDr$getPageSource()[[1]]
+page_html <- page_parse %>% 
+  read_html()
+
+flag_next <- TRUE
+cnt <- 0
+
+base_url <- "https://www.ksa.or.kr"
+
+while(flag_next){
+  
+  flag_next <- html_nodes(page_html, "._inner") %>% 
+    html_elements("._next")
+  
+  num_sub_page <- html_nodes(page_html, "._inner") %>% 
+    html_elements("li")
+
+  if(length(flag_next) == 1){
+    
+    for(j in 2:length(num_sub_page)) {
+      
+      links <- html_nodes(page_html, "a") %>%
+        html_attr("href")    
+      
+      download_links <- links[grep("download", links)]
+    
+      for(i in 1:length(download_links)){
+        
+        cnt <- cnt + 1
+      
+        download_url <- paste0(base_url, download_links[1])
+      
+        dest_file_name <- paste0(cnt, ".pdf")
+      
+        download.file(download_url, destfile = 
+                        paste0("C:/Users/nabataea/Google 드라이브(muoe78@kNou.ac.kr)/문서/projects/sustainability/", dest_file_name))
+      
+        print(cnt)
+    }
+    
+    sub_page_xpath <- 
+    paste0("/html/body/div/div[3]/div/div[3]/div[2]/article/div/form/div/div/ul/li[", 1, "]/a")
+    
+    sub_page_xpath
+    remDr$findElement(using = "xpath",
+                      value = sub_page_xpath)$clickElement()
+    }
+    
+    remDr$findElement(using = "css selector", value = "._next")$clickElement()
+
+  } else {
+    flag_next <- FALSE
+  }
+}
+
+```
+
+```{r}
+while (flag) {
+  Sys.sleep(10) #10초 대기
+  webElemButton <- remDr$findElements(using = 'css selector',value = '.ZFr60d.CeoRYc') #'더보기' 버튼 element 찾아 지정
+  
+  if(length(webElemButton)==1){ #버튼이 나타난 경우 진입
+    endCnt <- 0 #시간 측정 초기화
+    webElem$sendKeysToElement(list(key = "home")) #화면의 처음(home)으로 이동
+    webElemButton <- remDr$findElements(using = 'css selector',value = '.ZFr60d.CeoRYc')
+    remDr$mouseMoveToLocation(webElement = webElemButton[[1]]) #해당 버튼으로 포인터 이동
+    remDr$click() #마우스 클릭 액션
+    webElem$sendKeysToElement(list(key = "end")) #해당 화면의 끝(end)으로 이동
+  }else{
+    if(endCnt>3){ #30초 이상 대기한 경우 진입
+      flag <- FALSE #while문 종료
+    }else{
+      endCnt <- endCnt + 1 #대기 시간 증가
+    }
+  }
+}
+```
+
+```{r}
+sub_page_xpath <- paste0("/html/body/div/div[3]/div/div[3]/div[2]/article/div/form/div/div/ul/li[", 3, "]/a")
+    
+remDr$findElement(using = "xpath",
+                      value = sub_page_xpath)$clickElement()
+```

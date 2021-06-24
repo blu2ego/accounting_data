@@ -1,0 +1,209 @@
+---
+title: "지속가능보고서 텍스트 마이닝"
+author: "정우준"
+date: '2021 3 10 '
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 지속가능보고서 텍스트 마이닝
+
+지속가능경영이 중요해지고 있다.
+
+-   한국표준협회에서 ISO 26000에 기반한 대한민국지속가능성지수(Korean Sustainability Index)를 산출하여 발표하고 있다([https://www.ksa.or.kr/ksi/index.do).](https://www.ksa.or.kr/ksi/index.do).) 여기에서는 한글과 영문의 지속가능성 보고서 DB도 구축하여 제공하고 있다([https://www.ksa.or.kr/ksi/4982/subview.do).이](https://www.ksa.or.kr/ksi/4982/subview.do).이) 문서의 목적은 위에서 제공되는 지속가능보고서를 크롤링하는 방법을 제공한다.
+
+```{bash}
+cd C:\Rselenium
+java -Dwebdriver.gecko.driver="geckodriver.exe" -jar selenium-server-standalone-3.141.59.jar -port 4445
+```
+
+![](selenium%20%EA%B5%AC%EB%8F%99.png)
+
+## Java 사용을 위한 환경변수 설정
+
+```{r}
+Sys.setenv(JAVA_HOME='C:/Program Files/Java/jre1.8.0_281')
+```
+
+## 필요한 패키지 로딩
+
+```{r}
+library(RSelenium)
+library(rvest)
+library(httr)
+library(stringr)
+```
+
+## 브라우저(chrome) 시동
+
+```{r}
+remDr <- remoteDriver(
+  remoteServerAddr="localhost",
+  port=4445L,
+  browserName="chrome")
+
+remDr$open()
+```
+
+## 기본 주소 설정
+
+```{r}
+base_url <- "https://www.ksa.or.kr"
+```
+
+## 대상 페이지로 이동
+
+```{r}
+remDr$navigate("https://www.ksa.or.kr/ksi/4982/subview.do")
+```
+
+## 국문보고서 선택
+
+```{r}
+remDr$findElement(using = "xpath",
+                  value ="/html/body/div/div[3]/div/div[3]/div[2]/article/div/div[2]/form/div/ul/li[1]/a")$clickElement()
+```
+
+## 페이지와 서브페이지 처리
+
+```{r}
+flag_next <- TRUE
+cnt <- 0
+
+
+page_parse <- remDr$getPageSource()[[1]]
+    
+page_html <- page_parse %>% 
+  read_html()
+    
+while(flag_next){
+
+  flag_next <- html_nodes(page_html, "._inner") %>% 
+    html_elements("._next")
+  
+  num_sub_page <- html_nodes(page_html, "._inner") %>% 
+    html_elements("li")
+  
+
+  if(length(flag_next) == 1){
+
+    for(j in 1:length(num_sub_page)) {
+
+    page_parse <- remDr$getPageSource()[[1]]
+    
+    page_html <- page_parse %>% 
+      read_html()
+        
+    Sys.setlocale('LC_ALL', 'English')
+    table <- page_html %>% 
+      html_table() %>%
+      data.frame()
+    Sys.setlocale('LC_ALL', 'Korean')
+    
+      links <- html_nodes(page_html, "a") %>%
+        html_attr("href")    
+      
+      download_links <- links[grep("download", links)]
+    
+      pbls_year <- str_sub(table[, 3], 1, 4)
+      
+      for(i in 1:length(download_links)){
+        
+        cnt <- cnt + 1
+      
+        download_url <- paste0(base_url, download_links[i])
+      
+        dest_file_name <- paste0(table[i, 1], "_", pbls_year[i], ".pdf")
+      
+        download.file(download_url, destfile = 
+                        paste0("C:/Users/nabataea/Google 드라이브(muoe78@kNou.ac.kr)/문서/projects/sustainability/ksr_kor/", 
+                               dest_file_name))
+      
+    }
+    
+    sub_page_xpath <- paste0("/html/body/div/div[3]/div/div[3]/div[2]/article/div/form/div/div/ul/li[", j, "]/a")
+    
+    remDr$findElement(using = "xpath",
+                      value = sub_page_xpath)$clickElement()
+    }
+    remDr$findElement(using = "css selector", value = "._next")$clickElement()
+  } 
+  else {
+  flag_next <- FALSE
+  }
+} 
+```
+
+# 다른 방법
+
+```{r}
+flag_next <- TRUE
+cnt <- 0
+
+while(flag_next){
+
+  page_parse <- remDr$getPageSource()[[1]]
+  
+  page_html <- page_parse %>% 
+    read_html()
+
+  flag_next <- html_nodes(page_html, "._inner") %>% 
+    html_elements("._next")
+  
+  if(length(flag_next) == 1){  # there exist next burton
+    
+    # parsing "li" tag: number of li is sub pages at one full page
+
+    for(j in 1:length(li)) {
+    
+    last_subpage_xpath <- sub_page_xpath <- paste0("/html/body/div/div[3]/div/div[3]/div[2]/article/div/form/div/div/ul/li[", length(li), "]/a")
+        
+    remDr$findElement(using = "xpath",
+                      value = last_subpage_xpath)$clickElement()  
+      
+    # compose sub page 
+    sub_page_xpath <- tryCatch(paste0("/html/body/div/div[3]/div/div[3]/div[2]/article/div/form/div/div/ul/li[", j, "]/a")) 
+    
+    # select sub page
+    tryCatch(remDr$findElement(using = "xpath",
+                      value = sub_page_xpath)$clickElement()) 
+    
+    # parsing table
+    Sys.setlocale('LC_ALL', 'English')
+    table <- page_html %>% 
+    html_table() %>%
+    data.frame()
+    Sys.setlocale('LC_ALL', 'Korean')
+    
+    # parsing "href" attribute
+    links <- html_nodes(page_html, "a") %>%
+    html_attr("href")    
+    
+    # compose download links
+    download_links <- links[grep("download", links)]
+    
+    # compose year variable
+    pbls_year <- str_sub(table[, 3], 1, 4)
+    
+    # download pdf files from one table
+    for(i in 1:length(download_links)){
+      
+      cnt <- cnt + 1
+          
+      download_url <- paste0(base_url, download_links[i])
+      
+      dest_file_name <- paste0(table[i, 1], "_", pbls_year[i], ".pdf")
+      
+      download.file(download_url, destfile = 
+                      paste0("C:/Users/nabataea/Google 드라이브(muoe78@kNou.ac.kr)/문서/projects/sustainability/ksr_kor/", dest_file_name))
+    }
+    
+    remDr$findElement(using = "css selector", value = "._next")$clickElement()
+    
+  }
+}
+
+```

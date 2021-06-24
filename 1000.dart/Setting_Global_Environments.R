@@ -10,13 +10,15 @@ library(rvest)
 library(stringi)
 library(tidyverse)
 library(jsonlite)
+library(xml2)
 # set base date(xml2)
 
-base_date <- Sys.Date()
+today <- Sys.Date()
+yesterday <- today -1
 
 # set main path
 code_dir <- "~/projects/ward/"
-data_dir <- "~/data2/ward_data/results/"
+data_dir <- "~/data2/ward_data/"
 
 # set additional path and create directories related to corp_code
 corps_code_zip_dir        <- "/dart/corps_code/zip/"
@@ -26,6 +28,11 @@ corps_code_parsed_csv_dir <- "/dart/corps_code/csv/"
 ifelse(!dir.exists(file.path(data_dir, corps_code_zip_dir)),        dir.create(file.path(data_dir, corps_code_zip_dir)),        FALSE)
 ifelse(!dir.exists(file.path(data_dir, corps_code_unzip_dir)),      dir.create(file.path(data_dir, corps_code_unzip_dir)),      FALSE)
 ifelse(!dir.exists(file.path(data_dir, corps_code_parsed_csv_dir)), dir.create(file.path(data_dir, corps_code_parsed_csv_dir)), FALSE)
+
+# A001
+filing_A001_dir <- "/dart/filings/A001/"
+filing_A001_xml_dir <- "/dart/filings/A001/xml/"
+filing_A001_csv_dir <- "/dart/filings/A001/csv/"
 
 # I001
 filing_I001_dir <- "/dart/filings/I001/"
@@ -95,3 +102,7 @@ xml_child2df <- function(x){
   return(x_df)
 }
 
+# select most recent report
+recent_doc <- function(x){
+  aggregate(data = x, . ~ year, FUN = "max")   
+}
